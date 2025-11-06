@@ -16,7 +16,7 @@ const Home = () => {
     const fetchProducts = async () => {
       try {
         const res = await axios.get("http://localhost:3000/prd/getPrd");
-        setProducts(res.data.slice(0, 8)); 
+        setProducts(res.data.slice(0,500)); 
       } catch (error) {
         console.log("Error fetching products:", error);
       }
@@ -25,9 +25,9 @@ const Home = () => {
   }, []);
 
   // ✅ When clicking category → go to shop with filter
-  const handleCategoryClick = (category) => {
-    navigate(`/shop?category=${encodeURIComponent(category)}`);
-  };
+  // const handleCategoryClick = (category) => {
+  //   navigate(`/shop?category=${encodeURIComponent(category)}`);
+  // };
 
   return (
     <div className="">

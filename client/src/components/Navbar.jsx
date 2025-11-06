@@ -10,14 +10,19 @@ import {
   FaHeart,
   FaShoppingCart,
 } from "react-icons/fa";
-const { user, logout, cart, wishlist } = useAuth();
-
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { cart } = useAuth();
+  const { user, logout, cart, wishlist, searchText, setSearchText } = useAuth();
+  // --- add this near top inside Navbar ---
+  const [search, setSearch] = useState("");
+
+  const handleSearch = (e) => {
+    if (e.key === "Enter") {
+      window.location.href = `/shop?search=${search}`;
+    }
+  };
 
   return (
     <nav className="w-full bg-white shadow-md fixed top-0 left-0 right-0 z-50">
@@ -30,7 +35,7 @@ export default function Navbar() {
           <Link to="#" className="hover:text-blue-600">
             My Account
           </Link>
-          <Link to="#" className="hover:text-blue-600">
+          <Link to="wishlist" className="hover:text-blue-600">
             Wishlist
           </Link>
         </div>
@@ -53,8 +58,14 @@ export default function Navbar() {
             type="text"
             placeholder="Search products..."
             className="flex-1 bg-transparent outline-none"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={handleSearch}
           />
-          <FaSearch className="text-gray-600 text-lg" />
+          <FaSearch
+            className="text-gray-600 text-lg cursor-pointer"
+            onClick={() => (window.location.href = `/shop?search=${search}`)}
+          />
         </div>
 
         {/* Icons */}
@@ -69,14 +80,14 @@ export default function Navbar() {
               {user ? user.name : "Login"}
             </span>
           </Link>
-<Link to="/wishlist" className="relative hover:text-blue-600">
-  <FaHeart size={30} />
-  {wishlist.length > 0 && (
-    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
-      {wishlist.length}
-    </span>
-  )}
-</Link>
+          <Link to="/wishlist" className="relative hover:text-blue-600">
+            <FaHeart size={30} />
+            {wishlist.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
+                {wishlist.length}
+              </span>
+            )}
+          </Link>
 
           <Link to="/cart" className="relative  hover:text-blue-600">
             <FaShoppingCart size={30} />
@@ -115,16 +126,28 @@ export default function Navbar() {
 
           {dropdownOpen && (
             <div className="absolute top-6 left-0 bg-white shadow-lg border rounded-md w-48 py-2 z-50">
-              <Link to="" className="block px-4 py-2 hover:bg-gray-100">
+              <Link
+                to="/shop?category=fruits"
+                className="block px-4 py-2 hover:bg-gray-100"
+              >
                 Fruits & Vegetables
               </Link>
-              <Link to="" className="block px-4 py-2 hover:bg-gray-100">
+              <Link
+                to="/shop?category=beverages"
+                className="block px-4 py-2 hover:bg-gray-100"
+              >
                 Beverages
               </Link>
-              <Link to="" className="block px-4 py-2 hover:bg-gray-100">
+              <Link
+                to="/shop?category=snacks"
+                className="block px-4 py-2 hover:bg-gray-100"
+              >
                 Snacks
               </Link>
-              <Link to="" className="block px-4 py-2 hover:bg-gray-100">
+              <Link
+                to="/shop?category=dairy"
+                className="block px-4 py-2 hover:bg-gray-100"
+              >
                 Dairy
               </Link>
             </div>
@@ -156,14 +179,29 @@ export default function Navbar() {
           <details className="cursor-pointer">
             <summary className="py-1">Shop</summary>
             <ul className="ml-4 flex flex-col gap-2">
-              <Link to="" onClick={() => setOpen(false)}>
+              <Link
+                to="//shop?category=fruits"
+                className="block px-4 py-2 hover:bg-gray-100"
+              >
                 Fruits & Vegetables
               </Link>
-              <Link to="" onClick={() => setOpen(false)}>
+              <Link
+                to="/shop?category=beverages"
+                className="block px-4 py-2 hover:bg-gray-100"
+              >
                 Beverages
               </Link>
-              <Link to="" onClick={() => setOpen(false)}>
+              <Link
+                to="/shop?category=snacks"
+                className="block px-4 py-2 hover:bg-gray-100"
+              >
                 Snacks
+              </Link>
+              <Link
+                to="/shop?category=dairy"
+                className="block px-4 py-2 hover:bg-gray-100"
+              >
+                Dairy
               </Link>
             </ul>
           </details>

@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { toast } from "react-toastify";
+
 import axios from "axios"; // ✅ Make sure this is here
 
 export const AuthContext = createContext();
-export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
@@ -11,13 +12,24 @@ export const AuthProvider = ({ children }) => {
   });
 
   const [token, setToken] = useState(() => sessionStorage.getItem("token"));
-  const [wishlist, setWishlist] = useState([]);
+  const [wishlist, setWishlist] = useState(() => {
+  const stored = sessionStorage.getItem("wishlist");
+  return stored ? JSON.parse(stored) : [];
+});
+
+
+
 
   // ✅ Cart State Load from session
   const [cart, setCart] = useState(() => {
     const storedCart = sessionStorage.getItem("cart");
     return storedCart ? JSON.parse(storedCart) : [];
   });
+
+  useEffect(() => {
+  sessionStorage.setItem("wishlist", JSON.stringify(wishlist));
+}, [wishlist]);
+
 
   const login = (userData, userToken) => {
     setUser(userData);
@@ -28,6 +40,8 @@ export const AuthProvider = ({ children }) => {
 
     // ✅ Load Cart from backend when login
     getCart(userData._id);
+    getWishlist(userData.email);
+
   };
 
   const logout = () => {
@@ -35,6 +49,7 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     setCart([]); // ✅ Clear cart
     sessionStorage.clear();
+    localStorage.clear();
   };
 
   // ✅ Sync cart to sessionStorage
@@ -70,17 +85,33 @@ export const AuthProvider = ({ children }) => {
 
   // ✅ Add to Cart Backend
   const addToCart = async (product) => {
-    try {
-      await axios.post("http://localhost:3000/cart/add", {
-        userId: user._id,
-        productId: product._id,
-      });
+  try {
+    // ✅ Optimistic UI first → update cart instantly
+    setCart((prev) => {
+      const exists = prev.find((item) => item.product._id === product._id);
+      if (exists) {
+        return prev.map((item) =>
+          item.product._id === product._id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+      return [...prev, { product, quantity: 1 }];
+    });
 
-      getCart(); // ✅ Refresh after update
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    // ✅ Backend update
+    await axios.post("http://localhost:3000/cart/add", {
+      userId: user._id,
+      productId: product._id,
+    });
+
+    // ✅ Sync back once confirmed
+    getCart();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 
   // ✅ Remove From Cart Backend
   const removeFromCart = async (id) => {
@@ -108,45 +139,74 @@ export const AuthProvider = ({ children }) => {
     });
     getCart();
   };
-  const getWishlist = async () => {
-    if (!user) return;
-    try {
-      const res = await axios.get(
-        `http://localhost:3000/wishlist/get/${user.email}`
-      );
-      const serverData = res.data;
-      const normalized =
-        serverData?.items?.map((it) => ({
-          product: it.product,
-        })) || [];
-      setWishlist(normalized);
-    } catch (err) {
-      console.log("Wishlist Fetch Error:", err);
-    }
-  };
+ const getWishlist = async () => {
+  if (!user) return;
+  try {
+    const res = await axios.get(
+      `http://localhost:3000/wishlist/get/${user.email}`
+    );
 
-  const addToWishlist = async (product) => {
-    try {
-      await axios.post("http://localhost:3000/wishlist/add", {
-        userEmail: user.email,
-        productId: product._id,
-      });
-      await getWishlist();
-    } catch (err) {
-      console.log("Add Wishlist Error:", err);
-    }
-  };
+    const serverData = res.data;
 
-  const removeFromWishlist = async (productId) => {
-    try {
-      await axios.delete(
-        `http://localhost:3000/wishlist/remove/${user.email}/${productId}`
-      );
-      await getWishlist();
-    } catch (err) {
-      console.log("Remove Wishlist Error:", err);
-    }
-  };
+    // ✅ Normalize
+    const normalized =
+      serverData?.items?.map((it) => ({
+        product: it.product || {},
+      })) || [];
+
+    setWishlist(normalized);
+  } catch (err) {
+    console.log("Wishlist Fetch Error:", err);
+  }
+};
+
+useEffect(() => {
+  if (user) getWishlist();
+}, [user]);
+
+const addToWishlist = async (product) => {
+  try {
+    await axios.post("http://localhost:3000/wishlist/add", {
+      userEmail: user.email,
+      productId: product._id,
+    });
+
+    setWishlist((prev) => {
+      if (prev.some((item) => item?.product?._id === product._id)) {
+        toast.info("Already in wishlist ❤️");
+        return prev;
+      }
+      toast.success("Added to wishlist ❤️");
+      return [...prev, { product }];
+    });
+
+  } catch (err) {
+    console.log("Add Wishlist Error:", err);
+    toast.error("Failed to add!");
+  }
+};
+
+
+
+
+const removeFromWishlist = async (productId) => {
+  try {
+    setWishlist((prev) => prev.filter((w) => w.product._id !== productId));
+
+    await axios.delete(
+      `http://localhost:3000/wishlist/remove/${user.email}/${productId}`
+    );
+
+    toast.info("Removed from wishlist");
+
+    getWishlist(user.email);
+  } catch (err) {
+    console.log("Remove Wishlist Error:", err);
+    toast.error("Failed to remove!");
+  }
+};
+
+
 
   return (
     <AuthContext.Provider
@@ -174,3 +234,7 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+
+
+export const useAuth = () => useContext(AuthContext);

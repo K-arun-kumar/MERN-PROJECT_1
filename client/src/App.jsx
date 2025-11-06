@@ -1,5 +1,4 @@
-
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route,Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./Authentication/Login";
@@ -14,7 +13,13 @@ import "react-toastify/dist/ReactToastify.css";
 import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
 import BuyNow from "./pages/BuyNow";
- import Wishlist from "./pages/Wishlist";
+import Wishlist from "./pages/Wishlist";
+import Beverages from "./shop/Beverages";
+import Snacks from "./shop/Snacks";
+import Dairy from "./shop/Dairy";
+import FruitsVegetables from "./shop/Fruits";
+import Checkout from "./pages/Checkout";
+
 
 function App() {
   return (
@@ -28,7 +33,6 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            {/* ✅ Only logged-in users can view Products */}
             <Route
               path="/products"
               element={
@@ -38,7 +42,6 @@ function App() {
               }
             />
 
-            {/* ✅ Only Admin can view Admin Dashboard */}
             <Route
               path="/admin/dashboard"
               element={
@@ -51,13 +54,17 @@ function App() {
             <Route path="/shop" element={<Shop />} />
 
             <Route path="/cart" element={<Cart />} />
-           
-          <Route path="/buy/:id" element={<BuyNow />} />
-         
 
-<Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/buy/:id" element={<BuyNow />} />
 
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/shop/beverages" element={<Beverages />} />
+            <Route path="/shop/snacks" element={<Snacks />} />
+            <Route path="/shop/dairy" element={<Dairy />} />
+            <Route path="/shop/fruits" element={<FruitsVegetables />} />
+           <Route path="/checkout" element={<Checkout />} />
 
+            <Route path="*" element={<Navigate to="/login" replace />} />
 
           </Routes>
         </div>
