@@ -9,6 +9,7 @@ import {
   FaUser,
   FaHeart,
   FaShoppingCart,
+  FaChevronDown,
 } from "react-icons/fa";
 
 export default function Navbar() {
@@ -25,17 +26,17 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="w-full bg-white shadow-md fixed top-0 left-0 right-0 z-50">
+    <nav className="w-full bg-white shadow-md z-50">
       {/* Top Info Bar */}
       <div className="bg-gray-100 text-sm text-gray-600 px-6 py-2 flex justify-between">
         <div className="flex gap-4">
-          <Link to="#" className="hover:text-blue-600">
+          <Link to="#" className="hover:text-green-600">
             About Us
           </Link>
-          <Link to="#" className="hover:text-blue-600">
+          <Link to="/my-account" className="hover:text-green-600">
             My Account
           </Link>
-          <Link to="wishlist" className="hover:text-blue-600">
+          <Link to="wishlist" className="hover:text-green-600">
             Wishlist
           </Link>
         </div>
@@ -48,16 +49,20 @@ export default function Navbar() {
       {/* Logo + Search + Icons */}
       <div className="px-6 py-4 flex justify-between items-center">
         {/* Logo */}
-        <Link to="/" className="text-3xl font-extrabold text-blue-600">
-          ShopStore
+        <Link to="/" className="flex items-center gap-2 group cursor-pointer">
+          <span className="text-3xl text-green-600">🌿</span>
+
+          <h1 className="text-3xl font-extrabold tracking-wide text-gray-800 group-hover:text-green-600 transition-all duration-200">
+            GreenLeaf
+          </h1>
         </Link>
 
         {/* Search */}
         <div className="hidden md:flex items-center w-1/2 border rounded-full px-4 py-2 bg-gray-100">
           <input
             type="text"
-            placeholder="Search products..."
-            className="flex-1 bg-transparent outline-none"
+            placeholder="Search for more than 20,000 products"
+            className="bg-transparent outline-none flex-1 px-4 text-sm"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={handleSearch}
@@ -80,7 +85,7 @@ export default function Navbar() {
               {user ? user.name : "Login"}
             </span>
           </Link>
-          <Link to="/wishlist" className="relative hover:text-blue-600">
+          <Link to="/wishlist" className="relative hover:text-red-600">
             <FaHeart size={30} />
             {wishlist.length > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
@@ -107,57 +112,79 @@ export default function Navbar() {
 
       {/* Category Menu */}
       <div className="bg-white border-t px-6 py-3 hidden md:flex gap-6 text-gray-700 font-medium items-center">
-        <Link to="/" className="hover:text-blue-600">
+        <Link to="/" className=" hover:text-green-600">
           Home
         </Link>
 
         {/* Dropdown Category */}
         <div
-          className="relative"
+          className="relative group"
           onMouseEnter={() => setDropdownOpen(true)}
           onMouseLeave={() => setDropdownOpen(false)}
         >
-          <Link
-            to="/shop"
-            className="hover:text-blue-600 flex items-center gap-1"
-          >
-            Shop ▼
+          <Link to ="/shop" className="hover:text-green-600 flex items-center gap-1 font-medium transition-all duration-200">
+            Shop
+            <FaChevronDown
+              size={12}
+              className={`transition-transform duration-300 ${
+                dropdownOpen ? "rotate-180" : ""
+              }`}
+            />
           </Link>
 
-          {dropdownOpen && (
-            <div className="absolute top-6 left-0 bg-white shadow-lg border rounded-md w-48 py-2 z-50">
-              <Link
-                to="/shop?category=fruits"
-                className="block px-4 py-2 hover:bg-gray-100"
-              >
-                Fruits & Vegetables
-              </Link>
-              <Link
-                to="/shop?category=beverages"
-                className="block px-4 py-2 hover:bg-gray-100"
-              >
-                Beverages
-              </Link>
-              <Link
-                to="/shop?category=snacks"
-                className="block px-4 py-2 hover:bg-gray-100"
-              >
-                Snacks
-              </Link>
-              <Link
-                to="/shop?category=dairy"
-                className="block px-4 py-2 hover:bg-gray-100"
-              >
-                Dairy
-              </Link>
-            </div>
-          )}
+          {/* Animated dropdown */}
+          <div
+            className={`absolute left-0 top-7 bg-white shadow-lg border rounded-xl w-52 py-3 z-50 transition-all duration-300
+      ${
+        dropdownOpen
+          ? "opacity-100 visible translate-y-0"
+          : "opacity-0 invisible -translate-y-2"
+      }`}
+          >
+            <Link
+              to="/shop?category=fruits"
+              className="block px-4 py-2 hover:bg-green-50 hover:text-green-600 transition-all"
+            >
+              🍎 Fruits & Vegetables
+            </Link>
+
+            <Link
+              to="/shop?category=beverages"
+              className="block px-4 py-2 hover:bg-green-50 hover:text-green-600 transition-all"
+            >
+              🍹 Beverages
+            </Link>
+
+            <Link
+              to="/shop?category=snacks"
+              className="block px-4 py-2 hover:bg-green-50 hover:text-green-600 transition-all"
+            >
+              🍪 Snacks
+            </Link>
+
+            <Link
+              to="/shop?category=dairy"
+              className="block px-4 py-2 hover:bg-green-50 hover:text-green-600 transition-all"
+            >
+              🧀 Dairy
+            </Link>
+          </div>
         </div>
 
-        <Link to="/blog" className="hover:text-blue-600">
+        <Link
+          to="/#recent-blog"
+          className="hover:text-green-600"
+          onClick={(e) => {
+            if (window.location.pathname !== "/") return;
+            e.preventDefault();
+            const section = document.getElementById("recent-blog");
+            section?.scrollIntoView({ behavior: "smooth" });
+          }}
+        >
           Blog
         </Link>
-        <Link to="/contact" className="hover:text-blue-600">
+
+        <Link to="/contact" className="hover:text-green-600">
           Contact
         </Link>
 

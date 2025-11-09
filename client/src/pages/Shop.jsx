@@ -59,92 +59,96 @@ const Shop = () => {
   }
 
   return (
-    <div className="pt-28 px-10 pb-10">
-      <h1 className="text-3xl font-bold mb-6">
-        {categoryFromUrl ? categoryFromUrl : "Shop Products"}
-      </h1>
+   <div className="pt-28 px-10 pb-10  bg-white">
+  <h1 className="text-3xl font-bold mb-6 text-gray-900">
+    {categoryFromUrl ? categoryFromUrl : "Shop Products"}
+  </h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        {filteredProducts.length > 0 ? (
-          filteredProducts.map((product) => {
-            // ✅ Check if item is already in wishlist
-            const isWishlisted = wishlist.some(
-              (item) => item?.product?._id === product._id
-            );
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+    {filteredProducts.length > 0 ? (
+      filteredProducts.map((product) => {
+        const isWishlisted = wishlist.some(
+          (item) => item?.product?._id === product._id
+        );
 
-            return (
-              <div
-                key={product._id}
-                className="relative border p-4 rounded-md shadow hover:shadow-lg transition cursor-pointer"
-                onClick={() => navigate(`/product/${product._id}`)}
+        return (
+          <div
+            key={product._id}
+            onClick={() => navigate(`/product/${product._id}`)}
+            className="relative border border-green-300 bg-white p-4 rounded-xl shadow-sm hover:shadow-lg transition cursor-pointer"
+          >
+            {/* ❤️ Wishlist Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                isWishlisted
+                  ? removeFromWishlist(product._id)
+                  : addToWishlist(product);
+              }}
+              className="absolute top-5 right-6 text-xl bg-white shadow rounded-full p-1"
+            >
+              {isWishlisted ? (
+                <FaHeart className="text-red-600" />
+              ) : (
+                <FaRegHeart className="text-gray-500 hover:text-red-600 transition" />
+              )}
+            </button>
+
+            <img
+              src={product.image}
+              className="h-40 w-full object-contain scale- rounded-md"
+              alt=""
+            />
+
+            <h3 className="text-lg font-semibold mt-3 text-gray-900">
+              {product.name}
+            </h3>
+
+            {/* Rating */}
+            <div className="flex items-center gap-2 mt-2">
+              <p className="text-green-600 font-medium text-lg">
+                ⭐ {product.avgRating || "4.3"}
+              </p>
+              <span className="text-gray-500 text-sm">(Customer Rating)</span>
+            </div>
+
+            {/* Pricing */}
+            <p className="text-xl font-bold mt-2 text-green-700">
+              ₹{product.price}
+            </p>
+
+            <div className="flex gap-2 mt-4">
+              {/* Add To Cart */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddToCart(product);
+                }}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md w-1/2 transition"
               >
-                {/* ❤️ Wishlist Button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation(); // ✅ Prevent navigating to product page
+                Add to Cart
+              </button>
 
-                    if (isWishlisted) {
-                      removeFromWishlist(product._id);
-                     
-                    } else {
-                      addToWishlist(product);
-                      
-                    }
-                  }}
-                  className="absolute top-2 right-2 text-xl"
-                >
-                  {isWishlisted ? (
-                    <FaHeart className="text-red-500" />
-                  ) : (
-                    <FaRegHeart className="text-gray-500 hover:text-red-500 transition" />
-                  )}
-                </button>
+              {/* Buy Now */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/buy/${product._id}`);
+                }}
+                className="border border-green-600 text-green-600 hover:bg-green-50 px-4 py-2 rounded-md w-1/2 transition"
+              >
+                Buy Now
+              </button>
+            </div>
+          </div>
+        );
+      })
+    ) : (
+      <p className="text-gray-500 text-lg">No products found.</p>
+    )}
+  </div>
+</div>
 
-                <img
-                  src={product.image}
-                  className="h-40 w-full object-cover rounded"
-                  alt=""
-                />
-
-                <h3 className="text-lg font-semibold mt-2">{product.name}</h3>
-
-                <div className="flex items-center gap-2 mt-1">
-                  <p className="text-yellow-500 text-lg">
-                    ⭐ {product.avgRating}
-                  </p>
-                  <span className="text-gray-500 text-sm">
-                    (Customer Rating)
-                  </span>
-                </div>
-
-                <div className="flex gap-2 mt-3">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAddToCart(product);
-                    }}
-                    className="bg-purple-600 text-white px-4 py-2 rounded-md w-1/2"
-                  >
-                    Add to Cart
-                  </button>{" "}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/buy/${product._id}`);
-                    }}
-                    className="border border-purple-600 text-purple-600 px-4 py-2 rounded-md w-1/2"
-                  >
-                    Buy Now
-                  </button>
-                </div>
-              </div>
-            );
-          })
-        ) : (
-          <p className="text-gray-500 text-lg">No products found.</p>
-        )}
-      </div>
-    </div>
   );
 };
 

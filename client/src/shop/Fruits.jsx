@@ -1,5 +1,5 @@
 import Shop from "../pages/Shop";
 
-export default function FruitsVegetables() {
-  return <Shop category="fruits & vegetables" />;
+export default function earbuds() {
+  return <Shop category="earbuds" />;
 }

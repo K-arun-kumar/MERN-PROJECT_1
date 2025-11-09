@@ -25,7 +25,7 @@ const Products = () => {
   if (loading) return <p className="text-center mt-10 text-xl">Loading...</p>;
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="pt-24 px-6 pb-12 w-full">
       <h1 className="text-3xl font-bold text-center mb-6">Products</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">

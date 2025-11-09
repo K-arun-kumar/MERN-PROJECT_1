@@ -9,43 +9,33 @@ import {
   AllCommunityModule,
   themeQuartz,
 } from "ag-grid-community";
+
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-// const myTheme = themeQuartz.withParams({
-//   spacing: 5,
-//   foregroundColor: "rgb(12, 140, 116)",
-//   headerBackgroundColor: "rgb(99, 239, 227)",
-//   backgroundColor: "rgb(211, 246, 239)",
-//   rowHoverColor: "lightgreen",
-//   textColor: "black",
-//   fontSize: 16,
-// });
+/* ✅ FRESHMINT THEME */
 const myTheme = themeQuartz.withParams({
   spacing: 6,
   fontSize: 15,
-
-  // Text & Accent
-  textColor: "#1E3A33",          // Deep readable green (professional)
-  foregroundColor: "#2E7D6B",    // Accent elements (buttons, highlights)
-
-  // Backgrounds
-  backgroundColor: "linear-gradient(135deg, #E8FFF4, #C9F6DD)", // ✅ Soft gradient background
-  headerBackgroundColor: "#D7F2E3",  // Softer pastel green table header
-
-  // Table Hover
-  rowHoverColor: "#ECFDF4",      // Extremely subtle hover tone (premium feel)
+  textColor: "#173f31",
+  foregroundColor: "#0E8F61",
+  headerBackgroundColor: "#D9F6E7",
+  backgroundColor: "#ffffff",
+  rowHoverColor: "#EBFFF5",
 });
-myTheme.tableBorderRadius = "12px";
-myTheme.shadow = "0px 2px 8px rgba(0,0,0,0.08)";
-
+myTheme.tableBorderRadius = "10px";
+myTheme.shadow = "0px 3px 12px rgba(0,0,0,0.06)";
 
 const AdminDashboard = () => {
   const gridRef = useRef();
   const [products, setProducts] = useState([]);
   const [editProduct, setEditProduct] = useState(null);
   const [searchText, setSearchText] = useState("");
-  const [showForm, setShowForm] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
+  /* ✅ NEW — CATEGORY FILTER STATE */
+  const [categoryFilter, setCategoryFilter] = useState("all");
+
+  const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -69,7 +59,7 @@ const AdminDashboard = () => {
   }, []);
 
   const deleteProduct = async (id) => {
-    if (!window.confirm("Are you sure to delete this product?")) return;
+    if (!window.confirm("Delete this product?")) return;
     await axios.delete(`http://localhost:3000/prd/deletePrd/${id}`);
     fetchProducts();
   };
@@ -79,7 +69,6 @@ const AdminDashboard = () => {
     const payload = {
       ...formData,
       price: Number(formData.price),
-      stock: Number(formData.stock),
     };
     await axios.post("http://localhost:3000/prd/createPrd", payload);
     setShowForm(false);
@@ -94,45 +83,48 @@ const AdminDashboard = () => {
     fetchProducts();
   };
 
-  const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(searchText.toLowerCase())
-  );
+  /* ✅ APPLY CATEGORY + SEARCH FILTER */
+  const filtered = products.filter((p) => {
+    const matchSearch = p.name.toLowerCase().includes(searchText.toLowerCase());
+    const matchCategory = selectedCategory
+      ? p.category === selectedCategory
+      : true;
+    return matchSearch && matchCategory;
+  });
 
+  /* ✅ GRID COLUMNS */
   const columns = useMemo(
     () => [
       {
         headerName: "Image",
         field: "image",
-        cellStyle: { display: "flex", justifyContent: "center" },
+        width: 140,
         cellRenderer: (params) => (
-          <div className="flex justify-center">
           <img
             src={params.value}
-            className="w-24 h-24 object-cover rounded-md  border shadow-sm"
+            className="w-20 h-20 rounded-md border object-cover shadow items-center justify-center"
           />
-          </div>
         ),
-        width: 160,
       },
-      { field: "name", width: 180 },
+      { field: "name", width: 200 },
       { field: "category", width: 150 },
-      { field: "price", width: 120 },
-      { field: "stock", width: 120 },
+      { field: "price", width: 110, valueFormatter: (p) => `₹${p.value}` },
+      { field: "stock", width: 100 },
       { field: "description", flex: 1 },
       {
         headerName: "Actions",
-        width: 200,
+        width: 220,
         cellRenderer: (p) => (
-          <div className="flex gap-2 justify-center">
-           <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded flex items-center gap-1 cursor-pointer transition-all"
-
+          <div className="flex justify-center gap-2 items-center">
+            <button
               onClick={() => setEditProduct(p.data)}
+              className="px-3 py-1 rounded bg-green-600 hover:bg-green-700 text-white flex items-center gap-1"
             >
               Edit <FaUserEdit />
             </button>
-            <button className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded flex items-center gap-1 cursor-pointer transition-all"
-
+            <button
               onClick={() => deleteProduct(p.data._id)}
+              className="px-3 py-1 rounded bg-red-600 hover:bg-red-700 text-white flex items-center gap-1"
             >
               Delete <MdDelete />
             </button>
@@ -151,67 +143,101 @@ const AdminDashboard = () => {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
+      textAlign: "center",
     },
   };
 
+  const handleRefresh = () => {
+    setSearchText("");
+    setSelectedCategory("");
+    fetchProducts();
+  };
+
   return (
-    <div className="flex min-h-screen bg-green-200">
+    <div className="flex min-h-screen bg-[#E8FFF4] ">
       {/* ✅ SIDEBAR */}
-      <aside className="w-60 bg-white shadow-xl p-6 border-r border-gray-900">
-  <h2 className="text-2xl font-semibold mb-8 text-blue-500">Admin Panel</h2>
-  <ul className="space-y-4 text-lg">
-    <li className="font-semibold text-blue-600 cursor-pointer">Dashboard</li>
-    <li className="text-gray-700 hover:text-blue-600 transition cursor-pointer">Users</li>
-    <li className="text-gray-700 hover:text-blue-600 transition cursor-pointer">Orders</li>
-  </ul>
-</aside>
-
-
-      {/* ✅ MAIN CONTENT */}
-      <main className="flex-1 p-6">
-        <div className="flex justify-between items-center mb-5">
-          <h1 className="text-3xl font-semibold ">Products</h1>
-
-          <button
-            onClick={() => setShowForm(true)}
-            className="bg-blue-300 text-white px-4 py-2 rounded hover:bg-amber-500 cursor-pointer"
-          >
-            + Add Product
-          </button>
+      <aside className="w-64 bg-white shadow-xl border-r">
+        <div className="p-6 border-b">
+          <h2 className="text-2xl font-bold text-green-700">GreenLeaf🌿</h2>
+          <span className="text-2xl font-bold text-black-700">Admin Panel</span>
+          <p className="text-sm text-gray-500">Product Management</p>
         </div>
 
-        {/* ✅ SEARCH & REFRESH */}
-        <div className="flex justify-between mb-4">
-          <input
-            className="border p-2 rounded w-72"
-            placeholder="Search product..."
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-          />
-          <button
-            onClick={fetchProducts}
-            className="bg-green-300 text-white px-4 py-2  rounded  hover:bg-amber-500 cursor-pointer"
-          >
-            Refresh 🔄
-          </button>
+        <ul className="p-5 space-y-2 text-[16px] font-medium">
+          <li className="bg-green-50 text-green-700 px-4 py-2 rounded cursor-pointer hover:bg-green-100">
+            Dashboard
+          </li>
+          <li className="hover:bg-green-50 px-4 py-2 rounded cursor-pointer">
+            Orders
+          </li>
+          <li className="hover:bg-green-50 px-4 py-2 rounded cursor-pointer">
+            Settings
+          </li>
+        </ul>
+      </aside>
+
+      {/* ✅ MAIN */}
+      <main className="flex-1 px-8 py-6">
+        {/* TOP */}
+        {/* ✅ PAGE TITLE */}
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-3xl font-bold text-green-800">Products</h1>
         </div>
 
-        {/* ✅ DATA TABLE */}
+        {/* ✅ SEARCH + FILTER + BUTTONS */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          {/* LEFT SEARCH + CATEGORY */}
+          <div className="flex flex-wrap gap-3">
+            <input
+              className="border p-2 rounded w-72 outline-green-600"
+              placeholder="Search product..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="border p-2 rounded w-48"
+            >
+              <option value="all">All Categories</option>
+              <option value="fruits">Fruits&Vegetables</option>
+              <option value="dairy">Dairy</option>
+              <option value="snacks">Snacks</option>
+              <option value="beverages">Beverages</option>
+            </select>
+          </div>
+
+          {/* ✅ RIGHT SIDE BUTTONS */}
+          <div className="flex gap-3">
+            <button
+              onClick={handleRefresh}
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            >
+              Refresh 🔄
+            </button>
+
+            <button
+              onClick={() => setShowForm(true)}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
+            >
+              + Add Product
+            </button>
+          </div>
+        </div>
+
+        {/* ✅ GRID */}
         <div
-          className="ag-theme-quartz shadow-xl rounded-xl border border-gray-200"
-          style={{
-            height: "670px",
-            padding: "12px",
-            background: "#ffffff",
-          }}
+          className="ag-theme-quartz rounded-xl shadow border border-gray-200"
+          style={{ height: "650px", marginTop: "10px", background: "#ffffff" }}
         >
           <AgGridReact
-            ref={gridRef}
-            rowData={filteredProducts}
+            rowData={filtered}
             columnDefs={columns}
             defaultColDef={defaultColDef}
             pagination={true}
-            paginationPageSize={15}
+            paginationPageSize={12}
+            paginationPageSizeSelector={[12, 20, 50, 100]}
             rowHeight={110}
             gridOptions={{ theme: myTheme }}
           />
@@ -220,32 +246,50 @@ const AdminDashboard = () => {
 
       {/* ✅ ADD PRODUCT MODAL */}
       {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white p-6 w-96 rounded shadow">
-            <h2 className="text-xl font-semibold mb-3">Add Product</h2>
-            <form onSubmit={handleAddProduct} className="space-y-3">
+        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+          <div className="bg-white rounded-xl shadow-2xl p-6 w-[420px] border border-green-200">
+            {/* HEADER */}
+            <h2 className="text-2xl font-bold text-green-700 mb-5 text-center">
+              Add New Product
+            </h2>
+
+            {/* FORM */}
+            <form onSubmit={handleAddProduct} className="space-y-4">
               {Object.keys(formData).map((field) => (
-                <input
-                  key={field}
-                  name={field}
-                  placeholder={field}
-                  value={formData[field]}
-                  onChange={(e) =>
-                    setFormData({ ...formData, [field]: e.target.value })
-                  }
-                  className="border p-2 w-full rounded"
-                />
+                <div key={field}>
+                  <label className="block text-sm font-medium text-gray-600 capitalize mb-1">
+                    {field}
+                  </label>
+
+                  <input
+                    name={field}
+                    placeholder={`Enter ${field}`}
+                    value={formData[field]}
+                    onChange={(e) =>
+                      setFormData({ ...formData, [field]: e.target.value })
+                    }
+                    className="border border-green-300 focus:border-green-500 focus:ring-2 
+              focus:ring-green-200 w-full p-2 rounded-md outline-none"
+                  />
+                </div>
               ))}
-              <div className="flex justify-end gap-2">
+
+              {/* BUTTONS */}
+              <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="px-3 py-1 bg-gray-400 text-white rounded"
+                  className="px-4 py-2 border border-gray-400 text-gray-600 
+            rounded-md hover:bg-gray-100 transition"
                 >
                   Cancel
                 </button>
-                <button className="px-3 py-1 bg-blue-600 text-white rounded">
-                  Save
+
+                <button
+                  className="px-4 py-2 bg-green-600 text-white font-medium 
+            rounded-md hover:bg-green-700 transition shadow-sm"
+                >
+                  Save Product
                 </button>
               </div>
             </form>

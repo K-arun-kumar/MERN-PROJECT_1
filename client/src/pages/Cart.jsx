@@ -1,130 +1,9 @@
-// import React from "react";
-// import { useAuth } from "../context/AuthContext";
-
-// const Cart = () => {
- 
-//   const { cart, increaseQty, decreaseQty, removeFromCart } = useAuth();
-
-
- 
-//   const validCart = cart.filter((item) => item.product);
-
-//   const total = validCart.reduce(
-//     (sum, item) => sum + Number(item.product.price) * item.quantity,
-//     0
-//   );
-
-//   return (
-//     <div className="pt-28 px-10 pb-20">
-//       <h1 className="text-3xl font-bold mb-6">Your Cart 🛒</h1>
-
-//       {cart.length === 0 ? (
-//         <p className="text-gray-500 text-lg">Your cart is empty.</p>
-//       ) : (
-//         <div className="grid md:grid-cols-3 gap-6">
-//           <div className="md:col-span-2 space-y-4">
-//             {cart && cart.length > 0 ? (
-//               validCart.map((item) => (
-//                 <div
-//                   key={item.product._id}
-//                   className="flex items-center gap-6 border rounded-md p-4 shadow-sm hover:shadow transition"
-//                 >
-//                   <img
-//                     src={item.product.image}
-//                     alt={item.product.name}
-//                     className="h-24 w-24 object-cover rounded"
-//                   />
-
-//                   <div className="flex-1">
-//                     <h2 className="font-semibold text-lg">
-//                       {item.product.name}
-//                     </h2>
-//                     <p className="text-purple-700 font-bold">
-//                       ₹{item.product.price}
-//                     </p>
-
-//                     <div className="flex items-center gap-3 mt-2">
-//                       <p className="text-sm text-gray-600">
-//                         Quantity:{" "}
-//                         <span className="font-semibold">{item.quantity}</span>
-//                       </p>
-
-//                       <button
-//                         onClick={() => decreaseQty(item.product._id)}
-//                         className="px-3 py-1 border rounded hover:bg-gray-200"
-//                       >
-//                         -
-//                       </button>
-
-//                       <span className="font-semibold">{item.quantity}</span>
-
-//                       <button
-//                         onClick={() => increaseQty(item.product._id)}
-//                         className="px-3 py-1 border rounded hover:bg-gray-200"
-//                       >
-//                         +
-//                       </button>
-//                     </div>
-//                   </div>
-
-//                   <button
-//                     onClick={() => removeFromCart(item.product._id)}
-//                     className="text-red-600 hover:underline"
-//                   >
-//                     Remove
-//                   </button>
-//                 </div>
-//               ))
-//             ) : (
-//               <p className="text-gray-500 text-center py-6 text-lg">
-//                 Your cart is empty 🛒
-//               </p>
-//             )}
-//           </div>
-
-//           <div className="border rounded-md p-6 shadow-sm h-fit">
-//   <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-
-//   {/* Unique items count */}
-//   <p className="text-gray-700 mb-2">
-//     Total Items: {validCart.length}
-//   </p>
-
-//   {/* Sum of quantities */}
-//   <p className="text-gray-700 mb-2">
-//     Total Quantity: {validCart.reduce((sum, item) => sum + item.quantity, 0)}
-//   </p>
-
-//   {/* Total price */}
-//   <p className="text-gray-700 mb-2">
-//     Total Amount: ₹{total}
-//   </p>
-
-//   <hr className="my-4" />
-// <button
-//   onClick={() => navigate("/checkout")}
-//   className="w-full bg-green-600 text-white py-2 rounded"
-// >
-//   Checkout
-// </button>
-
-// </div>
-
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default Cart;
-// //  className="px-3 py-1 border rounded hover:bg-gray-200"
 import React from "react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";   // ✅ ADD THIS
+import { useNavigate } from "react-router-dom"; // ✅ ADD THIS
 
 const Cart = () => {
-
-  const navigate = useNavigate();                 // ✅ ADD THIS
+  const navigate = useNavigate(); // ✅ ADD THIS
   const { cart, increaseQty, decreaseQty, removeFromCart } = useAuth();
 
   const validCart = cart.filter((item) => item.product);
@@ -135,61 +14,128 @@ const Cart = () => {
   );
 
   return (
-    <div className="pt-28 px-10 pb-20">
+    <div className="pt-28 px-6 md:px-16 pb-20">
       <h1 className="text-3xl font-bold mb-6">Your Cart 🛒</h1>
 
       {cart.length === 0 ? (
         <p className="text-gray-500 text-lg">Your cart is empty.</p>
       ) : (
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-8">
+          {/* LEFT CART LIST */}
           <div className="md:col-span-2 space-y-4">
-            {cart && cart.length > 0 ? (
-              validCart.map((item) => (
-                <div key={item.product._id} className="flex items-center gap-6 border rounded-md p-4 shadow-sm hover:shadow transition">
-                  
-                  <img src={item.product.image} alt={item.product.name} className="h-24 w-24 object-cover rounded" />
+            {/* Header */}
+            {/* HEADER */}
+            <div className="grid grid-cols-5 font-semibold text-gray-600 mb-3 px-4">
+              <p className="text-left">Product</p>
+              <p className="text-center">Price</p>
+              <p className="text-center">Quantity</p>
+              <p className="text-center">Subtotal</p>
+              <p className="text-center">Action</p>
+            </div>
 
-                  <div className="flex-1">
-                    <h2 className="font-semibold text-lg">{item.product.name}</h2>
-                    <p className="text-purple-700 font-bold">₹{item.product.price}</p>
+            {/* ROWS */}
+            {validCart.map((item) => (
+              <div
+                key={item.product._id}
+                className="
+      grid grid-cols-5 items-center gap-4
+      border rounded-lg p-4 mb-3 shadow-sm 
+      hover:bg-green-50 transition
+    "
+              >
+                {/* PRODUCT */}
+                <div className="flex items-center gap-4 text-left">
+                  <img
+                    src={item.product.image}
+                    alt={item.product.name}
+                    className="h-20 w-20 object-cover rounded"
+                  />
 
-                    <div className="flex items-center gap-3 mt-2">
-                      <p className="text-sm text-gray-600">
-                        Quantity: <span className="font-semibold">{item.quantity}</span>
-                      </p>
-
-                      <button onClick={() => decreaseQty(item.product._id)} className="px-3 py-1 border rounded hover:bg-gray-200">-</button>
-                      <span className="font-semibold">{item.quantity}</span>
-                      <button onClick={() => increaseQty(item.product._id)} className="px-3 py-1 border rounded hover:bg-gray-200">+</button>
-                    </div>
+                  <div>
+                    <p className="font-semibold text-lg">{item.product.name}</p>
                   </div>
+                </div>
 
-                  <button onClick={() => removeFromCart(item.product._id)} className="text-red-600 hover:underline">
+                {/* PRICE */}
+                <p className="text-center font-semibold text-gray-700">
+                  ₹{item.product.price}
+                </p>
+
+                {/* QUANTITY */}
+                <div className="flex items-center justify-center gap-2">
+                  <button
+                    onClick={() => decreaseQty(item.product._id)}
+                    className="w-8 h-8 flex items-center justify-center border rounded hover:bg-gray-200"
+                  >
+                    -
+                  </button>
+
+                  <span className="font-semibold">{item.quantity}</span>
+
+                  <button
+                    onClick={() => increaseQty(item.product._id)}
+                    className="w-8 h-8 flex items-center justify-center border rounded hover:bg-gray-200"
+                  >
+                    +
+                  </button>
+                </div>
+
+                {/* SUBTOTAL */}
+                <p className="text-center font-semibold text-gray-800">
+                  ₹{item.product.price * item.quantity}
+                </p>
+
+                {/* ACTION */}
+                <div className="text-center">
+                  <button
+                    onClick={() => removeFromCart(item.product._id)}
+                    className="text-red-600 hover:underline"
+                  >
                     Remove
                   </button>
                 </div>
-              ))
-            ) : (
-              <p className="text-gray-500 text-center py-6 text-lg">Your cart is empty 🛒</p>
-            )}
+              </div>
+            ))}
           </div>
 
-          <div className="border rounded-md p-6 shadow-sm h-fit">
-            <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+          {/* RIGHT SUMMARY */}
+          <div className="border border-green-200 bg-[#F5FFF4] rounded-xl p-6 shadow-sm h-fit">
+            <h2 className="text-2xl font-semibold mb-5 text-green-700">
+              Order Summary
+            </h2>
 
-            <p className="text-gray-700 mb-2">Total Items: {validCart.length}</p>
-            <p className="text-gray-700 mb-2">
-              Total Quantity: {validCart.reduce((sum, item) => sum + item.quantity, 0)}
-            </p>
-            <p className="text-gray-700 mb-2">Total Amount: ₹{total}</p>
+            <div className="space-y-3 text-gray-700 text-base">
+              <div className="flex justify-between">
+                <span>Items:</span>
+                <span className="font-medium">{validCart.length}</span>
+              </div>
 
-            <hr className="my-4" />
+              <div className="flex justify-between">
+                <span>Quantity:</span>
+                <span className="font-medium">
+                  {validCart.reduce((sum, item) => sum + item.quantity, 0)}
+                </span>
+              </div>
+
+              <div className="flex justify-between border-t pt-3 mt-3">
+                <span className="font-semibold text-lg text-green-800">
+                  Total:
+                </span>
+                <span className="font-bold text-2xl text-green-700">
+                  ₹{total}
+                </span>
+              </div>
+            </div>
 
             <button
-              onClick={() => navigate("/checkout")}   // ✅ Works now
-              className="w-full bg-green-600 text-white py-2 rounded"
+              onClick={() =>
+                navigate("/checkout", {
+                  state: { cart },
+                })
+              }
+              className="w-full bg-green-600 hover:bg-green-700 transition text-white py-3 mt-6 rounded-lg text-lg shadow-sm"
             >
-              Checkout
+              Proceed to Checkout
             </button>
           </div>
         </div>

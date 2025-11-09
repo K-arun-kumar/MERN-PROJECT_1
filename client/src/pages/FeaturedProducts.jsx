@@ -3,18 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 // ✅ Swiper imports
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+
+
 import { toast } from "react-toastify";
 
 import { FaHeart, FaRegHeart } from "react-icons/fa"; // For wishlist icon
 
 const FeaturedProducts = ({ products }) => {
   const navigate = useNavigate();
-  const { user, addToWishlist, wishlist, removeFromWishlist } = useAuth();
+  const { user, addToWishlist, wishlist, removeFromWishlist,addToCart } = useAuth();
 
   const handleView = (product) => {
     if (!user) {
@@ -49,67 +46,107 @@ const FeaturedProducts = ({ products }) => {
       )
     : products;
 
-  const featured = filtered.slice(0, 500);
+  const featured = filtered.slice(0, 12);
+  const handleAddToCart = (product) => {
+      if (!user) {
+        toast.warning("Please login to add products to cart");
+        return navigate("/login");
+      }
+      addToCart(product);
+      toast.success("Added to cart ✅");
+    };
+  
 
-  return (
-    <section className="px-10 py-8">
-      <h2 className="text-2xl font-semibold mb-5">Editor's Picks ✨</h2>
-
-      <Swiper
-        modules={[Navigation, Pagination, Autoplay]}
-        spaceBetween={20}
-        slidesPerView={1}
-        pagination={{ clickable: true }}
-        autoplay={{ delay: 2500 }}
-        breakpoints={{
-          640: { slidesPerView: 2 },
-          1024: { slidesPerView: 4 },
-        }}
-        className="w-full"
+ return (
+  <section className="px-6 md:px-12 py-10">
+    {/* Header */}
+    <div className="flex justify-between items-center mb-6">
+      <h2 className="text-3xl font-bold">Best Selling Products</h2>
+      <button
+        onClick={() => navigate("/shop")}
+        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 text-sm rounded-md"
       >
-        {featured.length === 0 && (
-          <p className="text-gray-500 text-center">No products found.</p>
-        )}
+        View All
+      </button>
+    </div>
 
-        {featured.map((product) => {
-          const isWishlisted = wishlist.some(
-            (item) => item?.product?._id === product._id
-          );
+    {featured.length === 0 && (
+      <p className="text-gray-500 text-center">No products found.</p>
+    )}
 
-          return (
-            <SwiperSlide key={product._id}>
-              <div
-                className="relative border rounded-md shadow hover:shadow-lg p-4 cursor-pointer transition-all"
-                onClick={() => handleView(product)} // ✅ NAVIGATION FIX
-              >
-                <button
-                  onClick={(e) => handleWishlist(e, product)}
-                  className="absolute top-2 right-2 text-xl"
-                >
-                  {isWishlisted ? (
-                    <FaHeart className="text-red-500" />
-                  ) : (
-                    <FaRegHeart className="text-gray-500 hover:text-red-500" />
-                  )}
-                </button>
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="h-40 w-full object-cover rounded-md"
-                />
-               
-                <h3 className="text-lg font-semibold mt-2">{product.name}</h3>
-                <p className="text-gray-500 text-sm">{product.category}</p>
-                <p className="text-purple-700 font-bold mt-1">
-                  ₹{product.price}
-                </p>
-              </div>
-            </SwiperSlide>
-          );
-        })}
-      </Swiper>
-    </section>
-  );
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {featured.map((product) => {
+        const isWishlisted = wishlist.some(
+          (item) => item?.product?._id === product._id
+        );
+
+        return (
+          <div
+            key={product._id}
+            className="relative border rounded-xl bg-white shadow-md hover:shadow-xl transition-all group p-4 cursor-pointer"
+            onClick={() => handleView(product)}
+          >
+            {/* Wishlist Button */}
+            <button
+              onClick={(e) => handleWishlist(e, product)}
+              className="absolute top-2 right-2 p-1 rounded-full bg-white shadow-md text-lg hover:scale-110"
+            >
+              {isWishlisted ? (
+                <FaHeart className="text-red-500" />
+              ) : (
+                <FaRegHeart className="text-gray-500 group-hover:text-red-500" />
+              )}
+            </button>
+
+            {/* Product Image */}
+            <img
+              src={product.image}
+              alt={product.name}
+              className="h-40 w-full object-contain rounded-md"
+            />
+
+            {/* Name */}
+            <h3 className="text-md font-semibold mt-3 text-gray-900 truncate">
+              {product.name}
+            </h3>
+
+            {/* Rating */}
+            <div className="flex items-center text-yellow-400 mt-1 text-sm">
+              {"⭐".repeat(Math.round(product.avgRating || 4))}
+              <span className="text-gray-600 ml-1">
+                ({product.reviews?.length || 0})
+              </span>
+            </div>
+
+            {/* Price */}
+            <div className="flex items-center gap-3 mt-2">
+              <p className="text-lg font-bold text-green-600">
+                ₹{product.price}
+              </p>
+              <p className="text-gray-400 line-through text-sm">
+                ₹{product.oldPrice || product.price + 50}
+              </p>
+              <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-md">
+                10% OFF
+              </span>
+            </div>
+
+            {/* Buttons */}
+            <button
+              className="mt-3 w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-2 rounded-md text-sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAddToCart(item.product);
+              }}
+            >
+              <i className="fa fa-shopping-cart" /> Add to Cart
+            </button>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+);
 };
 
 export default FeaturedProducts;

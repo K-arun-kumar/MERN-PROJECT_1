@@ -9,6 +9,8 @@ import Regroute from "./routes/registerRouter.js";
 import cors from "cors";
 import cartRoutes from "./routes/cartRoutes.js"; // ✅ correct import
 import wishlistRoutes from "./routes/wishlistRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
+
 
 
 const app = express();
@@ -27,6 +29,9 @@ app.use("/reg", Regroute);  // Register API
 app.use("/cart", cartRoutes);
 
 app.use("/wishlist", wishlistRoutes);
+
+app.use("/orders", orderRoutes);
+
 
 
 

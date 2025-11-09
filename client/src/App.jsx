@@ -1,4 +1,7 @@
-import { Routes, Route,Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
+
+import { useAuth } from "./context/AuthContext";
+
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./Authentication/Login";
@@ -19,29 +22,65 @@ import Snacks from "./shop/Snacks";
 import Dairy from "./shop/Dairy";
 import FruitsVegetables from "./shop/Fruits";
 import Checkout from "./pages/Checkout";
+import OrderSuccess from "./pages/OrderSuccess";
+import Orders from "./pages/Orders";
+import Error from "./Error/Error";
+import Joins from "./Apps/Joins";
 
+import PaymentPage from "./pages/PaymentPage";
+import ProcessingPage from "./pages/ProcessingPage";
+import MyAccount from "./components/MyAccount";
+
+import Profile from "./Edituser/Profile";
 
 function App() {
+  const { isLoggedIn } = useAuth();
+
   return (
     <>
-      <div className="pt-[100px] px-6">
-        <Navbar />
-
-        <div className="mt-16">
+      <div>
+        <div className="">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Joins />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/product/:id" element={<ProductDetails />} />
+              <Route path="/shop" element={<Shop />} />
+
+              <Route path="/cart" element={<Cart />} />
+
+              <Route path="/buy/:id" element={<BuyNow />} />
+
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/shop/beverages" element={<Beverages />} />
+              <Route path="/shop/snacks" element={<Snacks />} />
+              <Route path="/shop/dairy" element={<Dairy />} />
+              <Route path="/shop/fruits" element={<FruitsVegetables />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/order-success" element={<OrderSuccess />} />
+
+              <Route
+                path="/products"
+                element={
+                  <ProtectedRoute>
+                    <Products />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/orders"
+                element={isLoggedIn ? <Orders /> : <Navigate to="/login" />}
+              />
+              <Route
+                path="/admin/dashboard"
+                element={
+                  <AdminRoute>
+                    <AdminDashboard />
+                  </AdminRoute>
+                }
+              />
+            </Route>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-
-            <Route
-              path="/products"
-              element={
-                <ProtectedRoute>
-                  <Products />
-                </ProtectedRoute>
-              }
-            />
-
             <Route
               path="/admin/dashboard"
               element={
@@ -50,22 +89,13 @@ function App() {
                 </AdminRoute>
               }
             />
-            <Route path="/product/:id" element={<ProductDetails />} />
-            <Route path="/shop" element={<Shop />} />
 
-            <Route path="/cart" element={<Cart />} />
+            <Route path="/payment" element={<PaymentPage />} />
+            <Route path="/processing" element={<ProcessingPage />} />
+            <Route path="/my-account" element={<MyAccount />} />
+            <Route path="/profile" element={<Profile />} />
 
-            <Route path="/buy/:id" element={<BuyNow />} />
-
-            <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/shop/beverages" element={<Beverages />} />
-            <Route path="/shop/snacks" element={<Snacks />} />
-            <Route path="/shop/dairy" element={<Dairy />} />
-            <Route path="/shop/fruits" element={<FruitsVegetables />} />
-           <Route path="/checkout" element={<Checkout />} />
-
-            <Route path="*" element={<Navigate to="/login" replace />} />
-
+            <Route path="*" element={<Error />} />
           </Routes>
         </div>
       </div>
