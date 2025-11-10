@@ -144,7 +144,7 @@ const EditProductModal = ({ editProduct, setEditProduct, fetchProducts }) => {
             Stock Quantity
           </label>
           <input
-            type="number"
+            type="text"
             name="stock"
             value={formData.stock}
             onChange={handleChange}

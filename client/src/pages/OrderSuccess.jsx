@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
+import { useEffect } from "react";
 
 export default function OrderSuccess() {
   const navigate = useNavigate();
@@ -9,6 +10,13 @@ export default function OrderSuccess() {
   const orderId = location.state?.orderId || "N/A";
   const totalAmount = location.state?.totalAmount || null;
   const paymentMethod = location.state?.paymentMethod || "COD";
+
+ useEffect(() => {
+  if (!orderId) {
+    navigate("/orders");
+  }
+}, []);
+
 
   const estimatedDate = new Date();
   estimatedDate.setDate(estimatedDate.getDate() + 5);

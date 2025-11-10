@@ -91,23 +91,24 @@ export const AuthProvider = ({ children }) => {
     if (user) getCart();
   }, [user]);
 
-  const addToCart = async (product) => {
+ const addToCart = async (product, qty = 1) => {
     try {
       setCart((prev) => {
         const exists = prev.find((item) => item.product._id === product._id);
         if (exists) {
           return prev.map((item) =>
             item.product._id === product._id
-              ? { ...item, quantity: item.quantity + 1 }
+               ? { ...item, quantity: item.quantity + qty }
               : item
           );
         }
-        return [...prev, { product, quantity: 1 }];
+        return [...prev, { product, quantity: qty }];
       });
 
       await axios.post("http://localhost:3000/cart/add", {
         userId: user._id,
         productId: product._id,
+        quantity: qty,
       });
 
       getCart();

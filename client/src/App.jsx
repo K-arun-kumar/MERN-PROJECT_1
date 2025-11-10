@@ -26,6 +26,7 @@ import OrderSuccess from "./pages/OrderSuccess";
 import Orders from "./pages/Orders";
 import Error from "./Error/Error";
 import Joins from "./Apps/Joins";
+import ContactUs from "./components/ContactUs";
 
 import PaymentPage from "./pages/PaymentPage";
 import ProcessingPage from "./pages/ProcessingPage";
@@ -33,14 +34,19 @@ import MyAccount from "./components/MyAccount";
 
 import Profile from "./Edituser/Profile";
 
+
+
 function App() {
   const { isLoggedIn } = useAuth();
 
   return (
     <>
+   
       <div>
         <div className="">
+        
           <Routes>
+             
             <Route path="/" element={<Joins />}>
               <Route path="/" element={<Home />} />
               <Route path="/product/:id" element={<ProductDetails />} />
@@ -57,6 +63,7 @@ function App() {
               <Route path="/shop/fruits" element={<FruitsVegetables />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/order-success" element={<OrderSuccess />} />
+              <Route path="/contactus" element={<ContactUs/>} />
 
               <Route
                 path="/products"

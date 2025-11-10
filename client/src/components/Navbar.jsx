@@ -122,7 +122,10 @@ export default function Navbar() {
           onMouseEnter={() => setDropdownOpen(true)}
           onMouseLeave={() => setDropdownOpen(false)}
         >
-          <Link to ="/shop" className="hover:text-green-600 flex items-center gap-1 font-medium transition-all duration-200">
+          <Link
+            to="/shop"
+            className="hover:text-green-600 flex items-center gap-1 font-medium transition-all duration-200"
+          >
             Shop
             <FaChevronDown
               size={12}
@@ -184,7 +187,7 @@ export default function Navbar() {
           Blog
         </Link>
 
-        <Link to="/contact" className="hover:text-green-600">
+        <Link to="/contactus" className="hover:text-green-600">
           Contact
         </Link>
 
@@ -207,7 +210,7 @@ export default function Navbar() {
             <summary className="py-1">Shop</summary>
             <ul className="ml-4 flex flex-col gap-2">
               <Link
-                to="//shop?category=fruits"
+                to="/shop?category=fruits"
                 className="block px-4 py-2 hover:bg-gray-100"
               >
                 Fruits & Vegetables

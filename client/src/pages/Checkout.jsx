@@ -2,11 +2,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import emailjs from "emailjs-com";   // ✅ added
 
 export default function Checkout() {
   const { cart, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [isPlacing, setIsPlacing] = useState(false);
 
   const saved = sessionStorage.getItem("buyNowItem");
   const buyNowItem = saved ? JSON.parse(saved) : null;
@@ -36,13 +38,13 @@ export default function Checkout() {
   );
 
   const discount = Math.round(mrp * 0.15);
-  const saveMore = 500;
-  const protectFee = 79;
+  const saveMore = 15;
+  const protectFee = 26;
   const gst = Math.round(mrp * 0.18);
   const shipping = mrp > 500 ? 0 : 40;
 
   const total = mrp - discount - saveMore + protectFee + gst + shipping;
-  const totalSavings = discount + saveMore;
+   const totalSavings = discount + saveMore;
 
   // FORM
   const [form, setForm] = useState({
@@ -63,7 +65,9 @@ export default function Checkout() {
   const [upiId, setUpiId] = useState("");
   const [bank, setBank] = useState("");
 
-  const placeOrder = async () => {
+
+  /* ✅  UPDATED placeOrder — EmailJS added */
+  const placeOrder = () => {
     if (
       !form.firstName.trim() ||
       !form.address.trim() ||
@@ -77,7 +81,6 @@ export default function Checkout() {
 
     if (!user) return navigate("/login");
 
-    // ✅ Payment validation
     if (paymentMode === "UPI" && !upiId.trim()) {
       toast.warning("Please enter valid UPI ID");
       return;
@@ -106,24 +109,44 @@ export default function Checkout() {
       bankName: paymentMode === "BANK" ? bank : null,
     };
 
-    try {
-      const res = await fetch("http://localhost:3000/orders/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderPayload),
-      });
+    // ✅ Format item list for email
+    const orderText = locationItems
+      .map(
+        (it) =>
+          `${it.product.name} | Qty: ${it.quantity} | ₹${it.product.price * it.quantity}`
+      )
+      .join("\n");
 
-      const savedOrder = await res.json();
+    // ✅ EmailJS send
+    emailjs.send(
+      "service_mukpbyc",
+      "template_9s51irh",
+      {
+        user_email: form.email,
+        user_name: form.firstName,
+        order_items: orderText,
+        total_amount: total,
+        payment_method: paymentMode,
+      },
+      "0ppoySHqZrYeaMSHx"
+    )
+    .then(() => {
+      toast.success("Order email sent ✅");
+    })
+    .catch(() => {
+      toast.error("Email send failed ❌");
+    });
 
-      toast.success("Order placed successfully ✅");
-
-      navigate("/order-success", {
-        state: { items: locationItems, orderId: savedOrder._id },
-      });
-    } catch (err) {
-      console.log(err);
-      toast.error("Order failed");
-    }
+    // ✅ Continue original logic
+    setIsPlacing(true);
+    navigate("/processing", {
+      state: {
+        orderPayload,
+        items: locationItems,
+        totalAmount: total,
+        paymentMethod: paymentMode,
+      },
+    });
   };
 
   return (
@@ -133,13 +156,48 @@ export default function Checkout() {
         <h2 className="text-3xl font-bold mb-6">Billing Details</h2>
 
         <div className="space-y-4">
-          <input name="firstName" placeholder="First Name*" className="border w-full p-2 rounded" onChange={handleChange} />
-          <input name="company" placeholder="Company Name" className="border w-full p-2 rounded" onChange={handleChange} />
-          <input name="address" placeholder="Street Address*" className="border w-full p-2 rounded" onChange={handleChange} />
-          <input name="apartment" placeholder="Apartment / Floor (Optional)" className="border w-full p-2 rounded" onChange={handleChange} />
-          <input name="city" placeholder="Town / City*" className="border w-full p-2 rounded" onChange={handleChange} />
-          <input name="phone" placeholder="Phone Number*" className="border w-full p-2 rounded" onChange={handleChange} />
-          <input name="email" placeholder="Email Address*" className="border w-full p-2 rounded" onChange={handleChange} />
+          <input
+            name="firstName"
+            placeholder="First Name*"
+            className="border w-full p-2 rounded"
+            onChange={handleChange}
+          />
+          <input
+            name="company"
+            placeholder="Company Name"
+            className="border w-full p-2 rounded"
+            onChange={handleChange}
+          />
+          <input
+            name="address"
+            placeholder="Street Address*"
+            className="border w-full p-2 rounded"
+            onChange={handleChange}
+          />
+          <input
+            name="apartment"
+            placeholder="Apartment / Floor (Optional)"
+            className="border w-full p-2 rounded"
+            onChange={handleChange}
+          />
+          <input
+            name="city"
+            placeholder="Town / City*"
+            className="border w-full p-2 rounded"
+            onChange={handleChange}
+          />
+          <input
+            name="phone"
+            placeholder="Phone Number*"
+            className="border w-full p-2 rounded"
+            onChange={handleChange}
+          />
+          <input
+            name="email"
+            placeholder="Email Address*"
+            className="border w-full p-2 rounded"
+            onChange={handleChange}
+          />
 
           <label className="flex items-center gap-2 mt-3">
             <input type="checkbox" />
@@ -199,17 +257,32 @@ export default function Checkout() {
 
           <div className="space-y-3 text-gray-700">
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="radio" value="COD" checked={paymentMode === "COD"} onChange={(e) => setPaymentMode(e.target.value)} />
+              <input
+                type="radio"
+                value="COD"
+                checked={paymentMode === "COD"}
+                onChange={(e) => setPaymentMode(e.target.value)}
+              />
               Cash on Delivery (Recommended ✅)
             </label>
 
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="radio" value="UPI" checked={paymentMode === "UPI"} onChange={(e) => setPaymentMode(e.target.value)} />
+              <input
+                type="radio"
+                value="UPI"
+                checked={paymentMode === "UPI"}
+                onChange={(e) => setPaymentMode(e.target.value)}
+              />
               UPI Payment (Google Pay / PhonePe / Paytm)
             </label>
 
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="radio" value="BANK" checked={paymentMode === "BANK"} onChange={(e) => setPaymentMode(e.target.value)} />
+              <input
+                type="radio"
+                value="BANK"
+                checked={paymentMode === "BANK"}
+                onChange={(e) => setPaymentMode(e.target.value)}
+              />
               Net Banking
             </label>
           </div>

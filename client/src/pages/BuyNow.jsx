@@ -89,9 +89,7 @@ const BuyNow = () => {
       return navigate("/login");
     }
 
-    for (let i = 0; i < quantity; i++) {
-      addToCart(product);
-    }
+   addToCart(product, quantity);
 
     toast.success("Added to cart ✅");
   };

@@ -238,7 +238,7 @@ const AdminDashboard = () => {
             pagination={true}
             paginationPageSize={12}
             paginationPageSizeSelector={[12, 20, 50, 100]}
-            rowHeight={110}
+            rowHeight={90}
             gridOptions={{ theme: myTheme }}
           />
         </div>

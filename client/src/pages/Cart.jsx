@@ -37,11 +37,7 @@ const Cart = () => {
             {validCart.map((item) => (
               <div
                 key={item.product._id}
-                className="
-      grid grid-cols-5 items-center gap-4
-      border rounded-lg p-4 mb-3 shadow-sm 
-      hover:bg-green-50 transition
-    "
+                className="grid grid-cols-5 items-center gap-4 border rounded-lg p-4 mb-3 shadow-sm hover:bg-green-50 transition"
               >
                 {/* PRODUCT */}
                 <div className="flex items-center gap-4 text-left">
@@ -99,44 +95,75 @@ const Cart = () => {
           </div>
 
           {/* RIGHT SUMMARY */}
-          <div className="border border-green-200 bg-[#F5FFF4] rounded-xl p-6 shadow-sm h-fit">
-            <h2 className="text-2xl font-semibold mb-5 text-green-700">
+          <div className="border border-green-300 bg-white rounded-xl p-6 shadow-md h-fit">
+            {/* Title */}
+            <h2 className="text-2xl font-bold mb-5 text-green-700 flex items-center gap-2">
               Order Summary
             </h2>
 
+            {/* Breakdown */}
             <div className="space-y-3 text-gray-700 text-base">
               <div className="flex justify-between">
                 <span>Items:</span>
-                <span className="font-medium">{validCart.length}</span>
+                <span className="font-semibold">{validCart.length}</span>
               </div>
 
               <div className="flex justify-between">
-                <span>Quantity:</span>
-                <span className="font-medium">
+                <span>Total Quantity:</span>
+                <span className="font-semibold">
                   {validCart.reduce((sum, item) => sum + item.quantity, 0)}
                 </span>
               </div>
 
-              <div className="flex justify-between border-t pt-3 mt-3">
-                <span className="font-semibold text-lg text-green-800">
-                  Total:
+              {/* NEW — Delivery Fee */}
+              <div className="flex justify-between">
+                <span>Delivery Charge:</span>
+                <span className="font-semibold text-green-600">FREE</span>
+              </div>
+
+              {/* NEW — Savings */}
+              <div className="flex justify-between">
+                <span>Extra Savings:</span>
+                <span className="font-semibold text-green-600">-₹50</span>
+              </div>
+
+              {/* Total */}
+              <div className="flex justify-between border-t pt-4 mt-4">
+                <span className="font-bold text-lg text-green-800">
+                  Total Amount:
                 </span>
                 <span className="font-bold text-2xl text-green-700">
-                  ₹{total}
+                  ₹{total - 50}
                 </span>
               </div>
             </div>
 
+            {/* Offer Section */}
+            <div className="mt-5 p-4 rounded-lg bg-green-50 border border-green-200">
+              <p className="text-sm text-green-800 font-medium">
+                🎉 APPLY COUPONS AVAILABLE
+              </p>
+              <p className="text-xs text-gray-600 mt-1">
+                Save more using applicable offers at checkout
+              </p>
+            </div>
+
+            {/* Checkout Btn */}
             <button
               onClick={() =>
                 navigate("/checkout", {
                   state: { cart },
                 })
               }
-              className="w-full bg-green-600 hover:bg-green-700 transition text-white py-3 mt-6 rounded-lg text-lg shadow-sm"
+              className="w-full bg-green-600 hover:bg-green-700 transition text-white py-3 mt-6 rounded-lg text-lg font-semibold shadow"
             >
               Proceed to Checkout
             </button>
+
+            {/* Security Text */}
+            <p className="text-xs text-gray-500 text-center mt-3">
+              🔐 Safe & Secure Payments
+            </p>
           </div>
         </div>
       )}

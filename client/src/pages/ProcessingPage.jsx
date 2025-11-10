@@ -1,48 +1,62 @@
 import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function ProcessingPage() {
-  const navigate = useNavigate();
   const location = useLocation();
-  const { addOrder } = useAuth();
-  const payload = location.state;
+  const navigate = useNavigate();
+
+  const {
+    orderPayload,
+  } = location.state || {};
 
   useEffect(() => {
-    if (!payload) return;
+    if (!orderPayload) {
+      console.warn("⚠ No order data found → redirecting...");
+      return navigate("/checkout");
+    }
 
-    const place = async () => {
+    const saveOrder = async () => {
       try {
         const res = await fetch("http://localhost:3000/orders/add", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(orderPayload),
         });
-        const saved = await res.json();
 
-        // optional: keep in FE context list
-        if (addOrder);
+        const savedOrder = await res.json();
 
-        // fake processing delay
-        setTimeout(() => {
-          navigate("/order-success", {
-            state: { orderId: saved._id, items: saved.items },
-          });
-        }, 1800);
-      } catch (e) {
-        console.log(e);
+        if (!res.ok) {
+          console.log("❌ Server Error:", savedOrder);
+          return navigate("/checkout");
+        }
+
+        navigate("/order-success", {
+          state: {
+            items: orderPayload.items,
+            orderId: savedOrder._id,
+            totalAmount: orderPayload.totalAmount,
+            paymentMethod: orderPayload.paymentMethod,
+          },
+        });
+      } catch (error) {
+        console.log("❌ Order fail:", error);
         navigate("/checkout");
       }
     };
 
-    place();
+    // simulate processing
+    setTimeout(saveOrder, 1500);
   }, []);
 
   return (
-    <div className="pt-32 pb-24 px-6 text-center">
-      <div className="mx-auto w-16 h-16 border-4 border-[#4CAF50] border-t-transparent rounded-full animate-spin" />
-      <h2 className="text-2xl font-semibold mt-6 text-[#1E3932]">Processing payment…</h2>
-      <p className="text-gray-600 mt-1">Please don’t refresh or go back.</p>
+    <div className="flex flex-col justify-center items-center min-h-screen bg-green-50">
+      <h2 className="text-3xl font-bold text-gray-800 mb-4">
+        Processing Payment...
+      </h2>
+
+      <p className="text-gray-500">Please wait a moment</p>
+
+      <div className="animate-spin rounded-full h-12 w-12 border-4 border-green-600 border-t-transparent mt-6"></div>
     </div>
   );
 }
