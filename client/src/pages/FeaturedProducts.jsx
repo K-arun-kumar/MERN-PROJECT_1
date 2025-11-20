@@ -112,10 +112,7 @@ const FeaturedProducts = ({ products }) => {
 
             {/* Rating */}
             <div className="flex items-center text-yellow-400 mt-1 text-sm">
-              {"⭐".repeat(Math.round(product.avgRating || 4))}
-              <span className="text-gray-600 ml-1">
-                ({product.reviews?.length || 0})
-              </span>
+             ⭐ {product.avgRating || "4.3"}
             </div>
 
             {/* Price */}
@@ -124,11 +121,11 @@ const FeaturedProducts = ({ products }) => {
                 ₹{product.price}
               </p>
               <p className="text-gray-400 line-through text-sm">
-                ₹{product.oldPrice || product.price + 50}
+                ₹{product.oldPrice || product.price *1.2}
               </p>
-              <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-md">
-                10% OFF
-              </span>
+             <div className="absolute top-3 left-3 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                -{Math.floor(Math.random() * 40) + 10}%
+              </div>
             </div>
 
             {/* Buttons */}

@@ -120,7 +120,7 @@ const ProductDetails = () => {
               <img
                 src={mainImage}
                 alt={product.name}
-                className="w-80 h-80 object-contain rounded-lg"
+                className="w-80 h-80 object-contain rounded-lg cursor-move"
                 onMouseMove={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect();
                   const x = ((e.clientX - rect.left) / rect.width) * 100;

@@ -12,45 +12,56 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setErrorMsg("");
+ const handleLogin = async (e) => {
+  e.preventDefault();
+  setErrorMsg("");
 
-    try {
-      const res = await axios.post("http://localhost:3000/reg/loginReg", {
-        email,
-        password,
-      });
-      toast.success("Logged in successfully ✅");
 
-      // ✅ Store in sessionStorage
-      sessionStorage.setItem("token", res.data.token);
-      sessionStorage.setItem("user", JSON.stringify(res.data.user));
+  const ADMIN_EMAIL = "admin@gmail.com";
+  const ADMIN_PASSWORD = "admin123";
 
-      // ✅ Save user into global AuthContext
-      // ✅ Save user into global AuthContext
-      login(res.data.user);
+  
+  if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+  toast.success("Admin login successful 🚀");
 
-      console.log("User logged:", res.data.user); // ⬅️ Add this
+  const adminUser = { _id: "admin123", role: "admin", email: ADMIN_EMAIL };
 
-      if (res.data.user.role === "admin") {
-        console.log("admin detected"); // ⬅️ Add this
-        navigate("/admin/dashboard");
-      } else {
-        console.log("normal user detected");
-        // ⬅️ Add this
-        navigate("/");
-      }
+  sessionStorage.setItem("user", JSON.stringify(adminUser));
+  sessionStorage.setItem("token", "admintoken123"); 
 
-      // ✅ Redirect to products page
-    } catch (error) {
-      if (error.response?.data?.message) {
-        setErrorMsg(error.response.data.message);
-      } else {
-        toast.error(err.response?.data?.message || "Login Failed ❌");
-      }
-    }
-  };
+  login(adminUser, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWRhYTU1MjU5MjYxMmJiNjQwNDRkMCIsImlhdCI6MTc2MzYxMjE5NCwiZXhwIjoxNzYzNjk4NTk0fQ._iA0HnixP-2SIOMD8zKyloOQeFjBWsa-OTTzpMljNfU"); // ✅ TOKEN INCLUDED
+
+  navigate("/admin/dashboard");
+  return;
+}
+
+
+  try {
+    const res = await axios.post("http://localhost:3000/reg/loginReg", {
+      email,
+      password,
+    });
+
+    toast.success("Logged in successfully ✅");
+
+    sessionStorage.setItem("token", res.data.token);
+    sessionStorage.setItem("user", JSON.stringify(res.data.user));
+
+    login(res.data.user, res.data.token);
+
+
+    navigate("/");
+  } catch (error) {
+    console.log(error);
+
+    const message =
+      error?.response?.data?.message || "Invalid email or password ❌";
+
+    setErrorMsg(message);
+    toast.error(message);
+  }
+};
+
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-[#F7FFF4] py-10 px-4">
@@ -129,18 +140,16 @@ const Login = () => {
           </div>
 
           {/* Google Button */}
-         <button
-  className="
+          <button
+            className="
     w-full py-3 border border-green-300 rounded-lg
     flex justify-center items-center gap-2
     hover:bg-green-50 transition
   "
->
-  <FcGoogle className="text-xl" />
-  <span className="text-sm font-medium">
-    Sign in with Google
-  </span>
-</button>
+          >
+            <FcGoogle className="text-xl" />
+            <span className="text-sm font-medium">Sign in with Google</span>
+          </button>
 
           {/* Signup link */}
           <p className="text-center mt-4 text-sm">

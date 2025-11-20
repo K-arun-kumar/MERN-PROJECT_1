@@ -9,6 +9,9 @@ import {
   AllCommunityModule,
   themeQuartz,
 } from "ag-grid-community";
+import { Link } from "react-router-dom";
+import { FaBackward } from "react-icons/fa";
+
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -174,6 +177,10 @@ const AdminDashboard = () => {
             Settings
           </li>
         </ul>
+
+        <div className=" bg-green-50 text-black-700 mt-90 hover:bg-green-500 px-4 py-2 rounded cursor-pointer">
+          <Link to ="/" className="flex justify-center items-center gap-2" ><FaBackward />Back to home</Link>
+        </div>
       </aside>
 
       {/* ✅ MAIN */}

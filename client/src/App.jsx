@@ -77,14 +77,7 @@ function App() {
                 path="/orders"
                 element={isLoggedIn ? <Orders /> : <Navigate to="/login" />}
               />
-              <Route
-                path="/admin/dashboard"
-                element={
-                  <AdminRoute>
-                    <AdminDashboard />
-                  </AdminRoute>
-                }
-              />
+             
             </Route>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
