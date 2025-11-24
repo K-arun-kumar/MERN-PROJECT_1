@@ -40,7 +40,6 @@ const Register = () => {
             />
           </div>
 
-          {/* ✅ FORM SIDE */}
           <div className="p-10">
             <div className="flex justify-center mb-4 text-3xl font-extrabold tracking-wide text-gray-800 group-hover:text-green-600 transition-all duration-200">
               <span className="w-12 h-12" />
@@ -97,13 +96,8 @@ const Register = () => {
               <hr className="flex-grow border" />
             </div>
 
-            {/* Google Button */}
             <button
-              className="
-    w-full py-3 border border-green-300 rounded-lg
-    flex justify-center items-center gap-2
-    hover:bg-green-50 transition
-  "
+              className="w-full py-3 border border-green-300 rounded-lg flex justify-center items-center gap-2 hover:bg-green-50 transition"
             >
               <FcGoogle className="text-xl" />
               <span className="text-sm font-medium">Sign in with Google</span>

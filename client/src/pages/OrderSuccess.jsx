@@ -11,12 +11,11 @@ export default function OrderSuccess() {
   const totalAmount = location.state?.totalAmount || null;
   const paymentMethod = location.state?.paymentMethod || "COD";
 
- useEffect(() => {
-  if (!orderId) {
-    navigate("/orders");
-  }
-}, []);
-
+  useEffect(() => {
+    if (!orderId) {
+      navigate("/orders");
+    }
+  }, []);
 
   const estimatedDate = new Date();
   estimatedDate.setDate(estimatedDate.getDate() + 5);
@@ -32,7 +31,7 @@ export default function OrderSuccess() {
 
         <p className="text-gray-500 mt-2">Thank you for shopping with us 😊</p>
 
-        {/* ✅ Order details */}
+     
         <div className="text-sm mt-4 space-y-1">
           <p>
             <span className="font-semibold">Order ID:</span>{" "}
@@ -52,7 +51,7 @@ export default function OrderSuccess() {
           )}
         </div>
 
-        {/* ✅ Order Summary */}
+        
         <div className="mt-6 border rounded-lg p-4 bg-gray-50">
           <h3 className="text-lg font-semibold mb-4 text-left">
             Order Summary

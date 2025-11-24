@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import emailjs from "emailjs-com";   // ✅ added
+import emailjs from "emailjs-com"; 
 
 export default function Checkout() {
   const { cart, user } = useAuth();
@@ -44,9 +44,9 @@ export default function Checkout() {
   const shipping = mrp > 500 ? 0 : 40;
 
   const total = mrp - discount - saveMore + protectFee + gst + shipping;
-   const totalSavings = discount + saveMore;
+  const totalSavings = discount + saveMore;
 
-  // FORM
+  
   const [form, setForm] = useState({
     firstName: "",
     company: "",
@@ -60,13 +60,11 @@ export default function Checkout() {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  // PAYMENT
   const [paymentMode, setPaymentMode] = useState("COD");
   const [upiId, setUpiId] = useState("");
   const [bank, setBank] = useState("");
 
-
-  /* ✅  UPDATED placeOrder — EmailJS added */
+ 
   const placeOrder = () => {
     if (
       !form.firstName.trim() ||
@@ -109,35 +107,38 @@ export default function Checkout() {
       bankName: paymentMode === "BANK" ? bank : null,
     };
 
-    // ✅ Format item list for email
+  
     const orderText = locationItems
       .map(
         (it) =>
-          `${it.product.name} | Qty: ${it.quantity} | ₹${it.product.price * it.quantity}`
+          `${it.product.name} | Qty: ${it.quantity} | ₹${
+            it.product.price * it.quantity
+          }`
       )
       .join("\n");
 
-    // ✅ EmailJS send
-    emailjs.send(
-      "service_mukpbyc",
-      "template_9s51irh",
-      {
-        user_email: form.email,
-        user_name: form.firstName,
-        order_items: orderText,
-        total_amount: total,
-        payment_method: paymentMode,
-      },
-      "0ppoySHqZrYeaMSHx"
-    )
-    .then(() => {
-      toast.success("Order email sent ✅");
-    })
-    .catch(() => {
-      toast.error("Email send failed ❌");
-    });
+    
+    emailjs
+      .send(
+        "service_mukpbyc",
+        "template_9s51irh",
+        {
+          user_email: form.email,
+          user_name: form.firstName,
+          order_items: orderText,
+          total_amount: total,
+          payment_method: paymentMode,
+        },
+        "0ppoySHqZrYeaMSHx"
+      )
+      .then(() => {
+        toast.success("Order email sent ✅");
+      })
+      .catch(() => {
+        toast.error("Email send failed ❌");
+      });
 
-    // ✅ Continue original logic
+    
     setIsPlacing(true);
     navigate("/processing", {
       state: {
@@ -151,7 +152,7 @@ export default function Checkout() {
 
   return (
     <div className="pt-24 px-10 pb-20 grid grid-cols-1 md:grid-cols-3 gap-10">
-      {/* LEFT */}
+      
       <div className="md:col-span-2">
         <h2 className="text-3xl font-bold mb-6">Billing Details</h2>
 
@@ -206,7 +207,7 @@ export default function Checkout() {
         </div>
       </div>
 
-      {/* RIGHT Summary */}
+      
       <div className="border rounded-md p-6 shadow-sm h-fit">
         <h2 className="text-xl font-semibold mb-4">Price Details</h2>
 
@@ -251,7 +252,7 @@ export default function Checkout() {
           You will save ₹{totalSavings} on this order
         </p>
 
-        {/* PAYMENT METHOD */}
+      
         <div className="mt-6">
           <h3 className="text-lg font-semibold mb-3">Payment Method</h3>
 

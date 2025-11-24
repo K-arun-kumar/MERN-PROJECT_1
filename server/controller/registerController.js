@@ -5,43 +5,7 @@ import bcrypt from "bcryptjs";
 
 import jwt from "jsonwebtoken";
 
-// LOGIN
-// export const loginRegister = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
 
-//     const userExist = await Register.findOne({ email });
-//     if (!userExist) {
-      
-//      res.status(400).json({ message: "User not found" });
-//     }
-
-//     const isMatch = await bcrypt.compare(password, userExist.password);
-//     if (!isMatch) {
-//       res.status(400).json({ message: "Wrong password" });
-//     }
-
-//     // generate token
-//     const token = jwt.sign({ id: userExist._id }, "secretKey", { expiresIn: "1d" });
-
-//    res.status(200).json({
-//   message: "Login Successful",
-//   token,
-//   user: {
-//     _id: userExist._id,
-//     name: userExist.name,
-//     email: userExist.email,
-//     role: userExist.role // ✅ send role
-//   }
-// });
-
-//   } catch (err) {
-//     res.status(500).json({ errorMessage: err.message });
-//   }
-// };
-
-// LOGIN
-// LOGIN
 export const loginRegister = async (req, res) => {
   try {
     const { email, password } = req.body;

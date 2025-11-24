@@ -1,52 +1,64 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-export default function ProcessingPage() {
-  const location = useLocation();
-  const navigate = useNavigate();
+  export default function ProcessingPage() {
+    const location = useLocation();
+    const navigate = useNavigate();
 
-  const {
-    orderPayload,
-  } = location.state || {};
+    const {
+      orderPayload,
+    } = location.state || {};
 
-  useEffect(() => {
-    if (!orderPayload) {
-      console.warn("⚠ No order data found → redirecting...");
+    useEffect(() => {
+      if (!orderPayload) {
+        console.warn("⚠ No order data found → redirecting...");
+        return navigate("/checkout");
+      }
+
+      const saveOrder = async () => {
+  try {
+    const token = sessionStorage.getItem("token");
+
+    const res = await fetch("http://localhost:3000/orders/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(orderPayload),
+    });
+
+    const savedOrder = await res.json();
+
+    if (!res.ok) {
+      console.log("❌ Server Error:", savedOrder);
       return navigate("/checkout");
     }
 
-    const saveOrder = async () => {
-      try {
-        const res = await fetch("http://localhost:3000/orders/add", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(orderPayload),
-        });
+    // ⭐⭐⭐ PASTE HERE — SAVE ORDER HISTORY ⭐⭐⭐
+    let existingOrders = JSON.parse(sessionStorage.getItem("orders")) || [];
+    existingOrders.push(savedOrder);
+    sessionStorage.setItem("orders", JSON.stringify(existingOrders));
+    // ⭐⭐⭐ END — SAVE ORDER HISTORY ⭐⭐⭐
 
-        const savedOrder = await res.json();
+    navigate("/order-success", {
+      state: {
+        items: orderPayload.items,
+        orderId: savedOrder._id,
+        totalAmount: orderPayload.totalAmount,
+        paymentMethod: orderPayload.paymentMethod,
+      },
+    });
 
-        if (!res.ok) {
-          console.log("❌ Server Error:", savedOrder);
-          return navigate("/checkout");
-        }
+  } catch (error) {
+    console.log("❌ Order fail:", error);
+    navigate("/checkout");
+  }
+};
 
-        navigate("/order-success", {
-          state: {
-            items: orderPayload.items,
-            orderId: savedOrder._id,
-            totalAmount: orderPayload.totalAmount,
-            paymentMethod: orderPayload.paymentMethod,
-          },
-        });
-      } catch (error) {
-        console.log("❌ Order fail:", error);
-        navigate("/checkout");
-      }
-    };
-
-    // simulate processing
-    setTimeout(saveOrder, 1500);
-  }, []);
+      // simulate processing
+      setTimeout(saveOrder, 1500);
+    }, []);
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen bg-green-50">

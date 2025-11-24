@@ -12,10 +12,7 @@ import {
 import { Link } from "react-router-dom";
 import { FaBackward } from "react-icons/fa";
 
-
 ModuleRegistry.registerModules([AllCommunityModule]);
-
-/* ✅ FRESHMINT THEME */
 const myTheme = themeQuartz.withParams({
   spacing: 6,
   fontSize: 15,
@@ -35,7 +32,6 @@ const AdminDashboard = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  /* ✅ NEW — CATEGORY FILTER STATE */
   const [categoryFilter, setCategoryFilter] = useState("all");
 
   const [showForm, setShowForm] = useState(false);
@@ -86,7 +82,6 @@ const AdminDashboard = () => {
     fetchProducts();
   };
 
-  /* ✅ APPLY CATEGORY + SEARCH FILTER */
   const filtered = products.filter((p) => {
     const matchSearch = p.name.toLowerCase().includes(searchText.toLowerCase());
     const matchCategory = selectedCategory
@@ -95,7 +90,6 @@ const AdminDashboard = () => {
     return matchSearch && matchCategory;
   });
 
-  /* ✅ GRID COLUMNS */
   const columns = useMemo(
     () => [
       {
@@ -158,7 +152,6 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-[#E8FFF4] ">
-      {/* ✅ SIDEBAR */}
       <aside className="w-64 bg-white shadow-xl border-r">
         <div className="p-6 border-b">
           <h2 className="text-2xl font-bold text-green-700">GreenLeaf🌿</h2>
@@ -179,21 +172,19 @@ const AdminDashboard = () => {
         </ul>
 
         <div className=" bg-green-50 text-black-700 mt-90 hover:bg-green-500 px-4 py-2 rounded cursor-pointer">
-          <Link to ="/" className="flex justify-center items-center gap-2" ><FaBackward />Back to home</Link>
+          <Link to="/" className="flex justify-center items-center gap-2">
+            <FaBackward />
+            Back to home
+          </Link>
         </div>
       </aside>
 
-      {/* ✅ MAIN */}
       <main className="flex-1 px-8 py-6">
-        {/* TOP */}
-        {/* ✅ PAGE TITLE */}
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-3xl font-bold text-green-800">Products</h1>
         </div>
 
-        {/* ✅ SEARCH + FILTER + BUTTONS */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          {/* LEFT SEARCH + CATEGORY */}
           <div className="flex flex-wrap gap-3">
             <input
               className="border p-2 rounded w-72 outline-green-600"
@@ -215,7 +206,6 @@ const AdminDashboard = () => {
             </select>
           </div>
 
-          {/* ✅ RIGHT SIDE BUTTONS */}
           <div className="flex gap-3">
             <button
               onClick={handleRefresh}
@@ -233,7 +223,6 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* ✅ GRID */}
         <div
           className="ag-theme-quartz rounded-xl shadow border border-gray-200"
           style={{ height: "650px", marginTop: "10px", background: "#ffffff" }}
@@ -251,16 +240,13 @@ const AdminDashboard = () => {
         </div>
       </main>
 
-      {/* ✅ ADD PRODUCT MODAL */}
       {showForm && (
         <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
           <div className="bg-white rounded-xl shadow-2xl p-6 w-[420px] border border-green-200">
-            {/* HEADER */}
             <h2 className="text-2xl font-bold text-green-700 mb-5 text-center">
               Add New Product
             </h2>
 
-            {/* FORM */}
             <form onSubmit={handleAddProduct} className="space-y-4">
               {Object.keys(formData).map((field) => (
                 <div key={field}>
@@ -281,7 +267,6 @@ const AdminDashboard = () => {
                 </div>
               ))}
 
-              {/* BUTTONS */}
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"

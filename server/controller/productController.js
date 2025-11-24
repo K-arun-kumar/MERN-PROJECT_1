@@ -1,8 +1,5 @@
 import Product from "../model/productModel.js";
 
-// ... your existing create, getAllPrd, getprdById, updatePrd, deletePrd ...
-
-// ✅ Add Review Controller (Paste from here)
 export const addReview = async (req, res) => {
   try {
     const { userId, comment, rating } = req.body;

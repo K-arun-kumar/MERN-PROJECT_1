@@ -4,7 +4,7 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 
-// ✅ ADDED — Magnify Component
+// ADDED — Magnify Component
 function Magnify({ src }) {
   const [zoom, setZoom] = useState(false);
   const [pos, setPos] = useState("50% 50%");
@@ -45,10 +45,10 @@ const ProductDetails = () => {
   const [rating, setRating] = useState("");
   const [comment, setComment] = useState("");
 
-  // ✅ ADDED — to store selected image
+  // ADDED — to store selected image
   const [mainImage, setMainImage] = useState(null);
 
-  // ✅ Fetch Product
+  // Fetch Product
   const fetchProduct = async () => {
     try {
       const res = await axios.get(`http://localhost:3000/prd/getId/${id}`);
@@ -63,7 +63,7 @@ const ProductDetails = () => {
     fetchProduct();
   }, [id]);
 
-  // ✅ Submit Review
+  // Submit Review
   const handleSubmitReview = async (e) => {
     e.preventDefault();
 
@@ -113,9 +113,9 @@ const ProductDetails = () => {
     <div className="pt-20 px-4 md:px-10 flex justify-center">
       <div className="w-full max-w-6xl border border-green-300 rounded-xl p-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          {/* ✅ LEFT SIDE (Image + Reviews) */}
+        
           <div className="border border-green-300 rounded-xl p-6 relative">
-            {/* ✅ Product Image */}
+            
             <div className="flex justify-center relative group">
               <img
                 src={mainImage}
@@ -135,7 +135,7 @@ const ProductDetails = () => {
                 }}
               />
 
-              {/* ✅ ADDED — Zoom box */}
+            
               <div
                 id="zoomBox"
                 className="absolute top-0 left-full ml-4 w-[400px] h-[400px]
@@ -150,7 +150,6 @@ const ProductDetails = () => {
               ></div>
             </div>
 
-            {/* ✅ Thumbnails (Optional) */}
             {product.image && (
               <div className="flex gap-3 mt-5 justify-center">
                 {[product.image, product.image, product.image].map((img, i) => (
@@ -166,7 +165,7 @@ const ProductDetails = () => {
 
             <hr className="my-6 border-green-200" />
 
-            {/* ✅ Reviews */}
+           
             <h2 className="text-xl font-bold text-gray-900 mb-3">Reviews</h2>
 
             <div className="space-y-3 max-h-72 overflow-y-auto pr-2">
@@ -194,7 +193,6 @@ const ProductDetails = () => {
             </div>
           </div>
 
-          {/* ✅ RIGHT SIDE (Details + Add Review) */}
           <div className="p-4">
             <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
 
@@ -217,7 +215,7 @@ const ProductDetails = () => {
               Stock: <span className="text-green-600">{product.stock}</span>
             </p>
 
-            {/* ✅ BUTTONS */}
+        
             <div className="flex gap-4 mt-6">
               <button
                 onClick={() => handleAddToCart(product)}
@@ -236,7 +234,7 @@ const ProductDetails = () => {
 
             <hr className="my-8 border-green-200" />
 
-            {/* ✅ Add Review */}
+            
             <h3 className="text-xl font-semibold mb-3 text-gray-900">
               Add Your Review
             </h3>

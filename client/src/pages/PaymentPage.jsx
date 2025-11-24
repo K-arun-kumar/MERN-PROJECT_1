@@ -7,27 +7,26 @@ export default function PaymentPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // orderPayload comes from Checkout -> navigate("/payment", { state: orderPayload })
   const incoming = location.state;
   if (!incoming) {
     return (
       <div className="pt-28 text-center">
         <p className="text-gray-600">No order data. Go back to checkout.</p>
-        <a href="/checkout" className="text-green-600 underline">Back</a>
+        <a href="/checkout" className="text-green-600 underline">
+          Back
+        </a>
       </div>
     );
   }
 
-  const [method, setMethod] = useState("upi");   // upi | card | netbanking | cod
+  const [method, setMethod] = useState("upi");
   const [upiId, setUpiId] = useState("");
   const [bank, setBank] = useState("");
 
   const handlePay = () => {
-    // (optional) light client validation
     if (method === "upi" && !upiId.trim()) return alert("Enter a UPI ID");
     if (method === "netbanking" && !bank) return alert("Select a bank");
 
-    // forward to processing with merged payload
     navigate("/processing", {
       state: {
         ...incoming,
@@ -40,13 +39,12 @@ export default function PaymentPage() {
 
   return (
     <div className="pt-24 px-6 md:px-16 pb-16 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-[#1E3932]">Payment Options</h1>
+      <h1 className="text-3xl font-bold mb-6 text-[#1E3932]">
+        Payment Options
+      </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* LEFT: Payment options */}
         <div className="lg:col-span-2 space-y-4">
-
-          {/* UPI */}
           <div className="border border-green-200 bg-white rounded-xl p-5 shadow-sm">
             <label className="flex items-center gap-3 cursor-pointer">
               <input
@@ -62,13 +60,13 @@ export default function PaymentPage() {
               <div className="mt-4 ml-6">
                 <div className="flex flex-wrap gap-3 mb-3">
                   <span className="inline-flex items-center gap-2 border rounded-md px-3 py-2">
-                    <SiGooglepay className="text-2xl"/> Google Pay
+                    <SiGooglepay className="text-2xl" /> Google Pay
                   </span>
                   <span className="inline-flex items-center gap-2 border rounded-md px-3 py-2">
-                    <SiPhonepe className="text-2xl"/> PhonePe
+                    <SiPhonepe className="text-2xl" /> PhonePe
                   </span>
                   <span className="inline-flex items-center gap-2 border rounded-md px-3 py-2">
-                    <SiPaytm className="text-2xl"/> Paytm
+                    <SiPaytm className="text-2xl" /> Paytm
                   </span>
                 </div>
 
@@ -85,7 +83,6 @@ export default function PaymentPage() {
             )}
           </div>
 
-          {/* Card */}
           <div className="border border-green-200 bg-white rounded-xl p-5 shadow-sm">
             <label className="flex items-center gap-3 cursor-pointer">
               <input
@@ -95,23 +92,34 @@ export default function PaymentPage() {
                 onChange={() => setMethod("card")}
               />
               <span className="text-lg font-semibold flex items-center gap-2">
-                <FaRegCreditCard/> Credit / Debit Card
+                <FaRegCreditCard /> Credit / Debit Card
               </span>
             </label>
 
             {method === "card" && (
               <div className="mt-4 ml-6 space-y-3">
-                <input className="border w-full p-3 rounded-md" placeholder="Card Number" />
+                <input
+                  className="border w-full p-3 rounded-md"
+                  placeholder="Card Number"
+                />
                 <div className="flex gap-3">
-                  <input className="border w-full p-3 rounded-md" placeholder="MM/YY" />
-                  <input className="border w-full p-3 rounded-md" placeholder="CVV" />
+                  <input
+                    className="border w-full p-3 rounded-md"
+                    placeholder="MM/YY"
+                  />
+                  <input
+                    className="border w-full p-3 rounded-md"
+                    placeholder="CVV"
+                  />
                 </div>
-                <input className="border w-full p-3 rounded-md" placeholder="Name on Card" />
+                <input
+                  className="border w-full p-3 rounded-md"
+                  placeholder="Name on Card"
+                />
               </div>
             )}
           </div>
 
-          {/* Netbanking */}
           <div className="border border-green-200 bg-white rounded-xl p-5 shadow-sm">
             <label className="flex items-center gap-3 cursor-pointer">
               <input
@@ -121,7 +129,7 @@ export default function PaymentPage() {
                 onChange={() => setMethod("netbanking")}
               />
               <span className="text-lg font-semibold flex items-center gap-2">
-                <FaUniversity/> Net Banking
+                <FaUniversity /> Net Banking
               </span>
             </label>
 
@@ -143,7 +151,6 @@ export default function PaymentPage() {
             )}
           </div>
 
-          {/* COD */}
           <div className="border border-green-200 bg-white rounded-xl p-5 shadow-sm">
             <label className="flex items-center gap-3 cursor-pointer">
               <input
@@ -153,22 +160,27 @@ export default function PaymentPage() {
                 onChange={() => setMethod("cod")}
               />
               <span className="text-lg font-semibold flex items-center gap-2">
-                <FaMoneyBillAlt/> Cash on Delivery
+                <FaMoneyBillAlt /> Cash on Delivery
               </span>
             </label>
           </div>
         </div>
 
-        {/* RIGHT: summary + pay button */}
         <div className="h-fit border border-green-200 bg-[#F5FFF4] rounded-xl p-6 shadow-sm">
-          <h3 className="text-xl font-semibold text-green-700 mb-4">Total Payable</h3>
+          <h3 className="text-xl font-semibold text-green-700 mb-4">
+            Total Payable
+          </h3>
           <div className="flex justify-between text-gray-700 mb-2">
             <span>Items</span>
-            <span>{incoming.items?.length || incoming.locationItems?.length || "-"}</span>
+            <span>
+              {incoming.items?.length || incoming.locationItems?.length || "-"}
+            </span>
           </div>
           <div className="flex justify-between border-t pt-3 mt-3">
             <span className="font-semibold text-lg text-green-800">Amount</span>
-            <span className="font-bold text-2xl text-green-700">₹{incoming.totalAmount || incoming.total}</span>
+            <span className="font-bold text-2xl text-green-700">
+              ₹{incoming.totalAmount || incoming.total}
+            </span>
           </div>
 
           <button

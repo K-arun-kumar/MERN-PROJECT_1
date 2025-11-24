@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 const RecentProductsBlog = ({ products = [] }) => {
   const navigate = useNavigate();
 
-  // ✅ fallback dummy if no product given
   const safeProducts =
     Array.isArray(products) && products.length > 0
       ? products.slice(0, 3)

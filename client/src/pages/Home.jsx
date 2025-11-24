@@ -4,10 +4,8 @@ import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import FeaturedProducts from "./FeaturedProducts";
 import RecentProductsBlog from "@/components/BlogPage";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
-import "swiper/css";
 
+import "swiper/css";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -15,7 +13,6 @@ const Home = () => {
 
   const [products, setProducts] = useState([]);
 
-  // ✅ Fetch products once & show only 4 for Editor's Pick
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -30,10 +27,8 @@ const Home = () => {
 
   return (
     <div className="">
-      {/* ---------- HERO SECTION ---------- */}
       <section className=" bg-[#FFE082]">
         <div className=" mx-auto flex flex-col md:flex-row items-center justify-between gap-10 px-4 sm:px-8 lg:px-12 py-14">
-          {/* LEFT CONTENT */}
           <div className="w-full md:w-1/2 pr-0 lg:pr-8">
             <p className="bg-green-200 text-green-800 px-3 py-1 rounded-md w-fit mb-4 text-sm font-medium">
               Fresh Organic Deals
@@ -101,9 +96,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ---------- CATEGORIES (CLICKABLE NOW) ---------- */}
       <section className="w-full px-6 md:px-14 py-10">
-        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold">Category</h2>
 
@@ -131,7 +124,6 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Category Slider */}
         <div
           id="catScroll"
           className="flex gap-10 py-4 overflow-x-auto no-scrollbar scroll-smooth"
@@ -140,12 +132,12 @@ const Home = () => {
             {
               name: "Fruits & Vegetables",
               img: "https://i.pinimg.com/1200x/43/13/28/43132856e8f1979d70657c1d8a93f8a1.jpg",
-              link:"/shop?category=fruits"
+              link: "/shop?category=fruits",
             },
             {
               name: "Beverages",
               img: "https://carst.com/wp-content/uploads/2024/01/colour-in-non-alcoholic-beverages.jpg",
-              link:"/shop?category=beverages"
+              link: "/shop?category=beverages",
             },
             {
               name: "Meats & Seafood",
@@ -154,7 +146,7 @@ const Home = () => {
             {
               name: "Biscuits & Snacks",
               img: "https://www.jiomart.com/images/product/original/rvteqk0y8i/taste-good-karela-biscuits-high-fiber-tasty-and-healthy-sugar-free-snacks-1600-g-pack-of-16-product-images-orvteqk0y8i-p593476239-0-202208270838.jpg?im=Resize=(420,420)",
-              link:"/shop?category=snacks"
+              link: "/shop?category=snacks",
             },
             {
               name: "Breads & Bakery",
@@ -163,7 +155,7 @@ const Home = () => {
             {
               name: "Breakfast & Dairy",
               img: "https://www.milkgenomics.org/wp-content/uploads//breakfast-dairy.jpeg",
-              link:"/shop?category=dairy"
+              link: "/shop?category=dairy",
             },
             {
               name: "Frozen Foods",
@@ -178,9 +170,7 @@ const Home = () => {
               key={i}
               className="flex flex-col items-center hover:scale-105 transition cursor-pointer"
               onClick={() => cat.link && navigate(cat.link)}
-
             >
-             
               <div className="w-28 h-28 rounded-full overflow-hidden shadow-md border border-gray-200">
                 <img
                   src={cat.img}
@@ -192,11 +182,10 @@ const Home = () => {
                 {cat.name}
               </p>
             </div>
-            
           ))}
         </div>
       </section>
-      {/* ✅ Only First 4 Products (Editor’s Pick) */}
+
       <FeaturedProducts products={products} />
       <RecentProductsBlog />
     </div>

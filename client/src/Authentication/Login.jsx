@@ -12,61 +12,61 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
- const handleLogin = async (e) => {
-  e.preventDefault();
-  setErrorMsg("");
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setErrorMsg("");
 
+    const ADMIN_EMAIL = "admin@gmail.com";
+    const ADMIN_PASSWORD = "admin123";
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+      toast.success("Admin login successful 🚀");
 
-  const ADMIN_EMAIL = "admin@gmail.com";
-  const ADMIN_PASSWORD = "admin123";
+      const adminUser = {
+        _id: "676f9e9f9f9f9f9f9f9f9f9f", // correct ID
+        role: "admin",
+        email: ADMIN_EMAIL,
+      };
 
-  
-  if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-  toast.success("Admin login successful 🚀");
+      const adminToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NmY5ZTlmOWY5ZjlmOWY5ZjlmOWY5ZiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2MzcwNDg2MCwiZXhwIjoxNzY2Mjk2ODYwfQ.885EKLWFcG4nuw35KIcm6KCyrqYUeMmRYR4ypCfnxZw";
 
-  const adminUser = { _id: "admin123", role: "admin", email: ADMIN_EMAIL };
+      sessionStorage.setItem("user", JSON.stringify(adminUser));
+      sessionStorage.setItem("token", adminToken);
 
-  sessionStorage.setItem("user", JSON.stringify(adminUser));
-  sessionStorage.setItem("token", "admintoken123"); 
+      login(adminUser, adminToken);
 
-  login(adminUser, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWRhYTU1MjU5MjYxMmJiNjQwNDRkMCIsImlhdCI6MTc2MzYxMjE5NCwiZXhwIjoxNzYzNjk4NTk0fQ._iA0HnixP-2SIOMD8zKyloOQeFjBWsa-OTTzpMljNfU"); // ✅ TOKEN INCLUDED
+      navigate("/admin/dashboard");
+      return;
+    }
 
-  navigate("/admin/dashboard");
-  return;
-}
+    try {
+      const res = await axios.post("http://localhost:3000/reg/loginReg", {
+        email,
+        password,
+      });
 
+      toast.success("Logged in successfully ✅");
 
-  try {
-    const res = await axios.post("http://localhost:3000/reg/loginReg", {
-      email,
-      password,
-    });
+      sessionStorage.setItem("token", res.data.token);
+      sessionStorage.setItem("user", JSON.stringify(res.data.user));
 
-    toast.success("Logged in successfully ✅");
+      login(res.data.user, res.data.token);
 
-    sessionStorage.setItem("token", res.data.token);
-    sessionStorage.setItem("user", JSON.stringify(res.data.user));
+      navigate("/");
+    } catch (error) {
+      console.log(error);
 
-    login(res.data.user, res.data.token);
+      const message =
+        error?.response?.data?.message || "Invalid email or password ❌";
 
-
-    navigate("/");
-  } catch (error) {
-    console.log(error);
-
-    const message =
-      error?.response?.data?.message || "Invalid email or password ❌";
-
-    setErrorMsg(message);
-    toast.error(message);
-  }
-};
-
+      setErrorMsg(message);
+      toast.error(message);
+    }
+  };
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-[#F7FFF4] py-10 px-4">
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-lg flex overflow-hidden border border-green-200">
-        {/* ✅ LEFT IMAGE SIDE */}
         <div className="hidden md:block w-1/2">
           <img
             src="https://i.pinimg.com/736x/d3/a4/b1/d3a4b1d91e8bdc0840f4ee35189d2f68.jpg"
@@ -75,9 +75,7 @@ const Login = () => {
           />
         </div>
 
-        {/* ✅ RIGHT FORM SECTION */}
         <div className="w-full md:w-1/2 px-10 py-10 flex flex-col justify-center">
-          {/* Logo */}
           <div className="flex justify-center mb-4">
             <div className="flex justify-center mb-4 text-3xl font-extrabold tracking-wide text-gray-800 group-hover:text-green-600 transition-all duration-200">
               <span className="w-12 h-12" />
@@ -92,7 +90,6 @@ const Login = () => {
             Please enter your email and password.
           </p>
 
-          {/* FORM */}
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="text-gray-700 text-sm">Email</label>
@@ -131,7 +128,6 @@ const Login = () => {
             </button>
           </form>
 
-          {/* Divider */}
           <div className="flex items-center my-5">
             <hr className="flex-grow border" />
 
@@ -139,7 +135,6 @@ const Login = () => {
             <hr className="flex-grow border" />
           </div>
 
-          {/* Google Button */}
           <button
             className="
     w-full py-3 border border-green-300 rounded-lg
@@ -151,7 +146,6 @@ const Login = () => {
             <span className="text-sm font-medium">Sign in with Google</span>
           </button>
 
-          {/* Signup link */}
           <p className="text-center mt-4 text-sm">
             Don’t have an account?{" "}
             <Link
